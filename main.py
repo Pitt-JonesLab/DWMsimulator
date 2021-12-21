@@ -29,8 +29,10 @@ def main():
     #print(memory)
 
     ## Set TRd position
-    TRd_start_loc =  cfg.TRd_start_loc
-    TRd_end_loc = cfg.TRd_end_loc
+    TRd_start_loc =  cfg.TRd_start_loc + (L/2) - 1
+    #print(TRd_start_loc)
+    TRd_end_loc = cfg.TRd_end_loc + (L/2) - 1
+    #print(TRd_end_loc)
 
     # Setting instruction to something other than 'quit'.
     instruction = ''
@@ -41,51 +43,62 @@ def main():
         instruction = input("Please enter the instruction, or enter 'quit': ")
 
         if (instruction == 'write 0'):
-            writeport = TRd_start_loc + (L/2)
-            #print(writeport)
-            data_in_binary = input("Enter the data to be inserted : ")
-            memory = adt.writezero(writeport, memory, data_in_binary)
+            writeport = TRd_start_loc
+            data = input("Enter the data to be inserted : ")
+            memory = adt.writezero(writeport, memory, data)
 
         elif (instruction == 'write 1'):
-            writeport = TRd_start_loc + (L/2) + TRd
-            data_in_binary = input("Enter the data to be inserted : ")
-            memory = adt.writeone(writeport, memory, data_in_binary)
+            writeport = TRd_end_loc
+            data = input("Enter the data to be inserted : ")
+            memory = adt.writeone(writeport, memory, data)
 
-        elif (instruction == 'Shift TRd left'):
-             TRd_start_loc = adt.shift_TRd_left()
+        elif (instruction == 'Shift Right'):
+             TRd_start_loc = TRd_start_loc + 1
+             TRd_end_loc = TRd_start_loc + TRd - 1
 
-        elif (instruction == 'Shift TRd Right'):
-             TRd_start_loc = adt.shift_TRd_right()
+        elif (instruction == 'Shift Left'):
+             TRd_start_loc = TRd_start_loc - 1
+             TRd_end_loc = TRd_start_loc + TRd - 1
+
+        elif (instruction == 'Read 0'):
+            print(memory[TRd_start_loc])
+
+        elif(instruction == 'Read 1'):
+            print(memory[TRd_end_loc])
+
 
         elif (instruction == 'operation'):
              operation = input("Enter the operations from the list: \n 1 : And \n 2 : Nand \n 3 : Xor \n 4 : Xnor \n 5 : Or \n 6 : Nor \n 7 : Not \n")
+             source = input("Enter the source from the list : \n 1 : AP0 \n 2: AP1 \n")
+             sink = input("Enter the source from the list : \n 1 : AP0 \n 2: AP1 \n 3: LE \n 4: RE \n")
              if operation == '1':
-                 result = logicop.And(memory,TRd_start_loc)
-                 addres.addResult(result, memory, TRd_start_loc)
+                 result = logicop.And(memory,TRd_start_loc, TRd_end_loc)
+                 addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
 
              elif operation == '2':
-                 result = logicop.Nand(memory,TRd_start_loc)
-                 addres.addResult(result, memory, TRd_start_loc)
+                 result = logicop.Nand(memory,TRd_start_loc, TRd_end_loc)
+                 addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
 
              elif operation == '3':
-                 result = logicop.Xor(memory,TRd_start_loc)
-                 addres.addResult(result, memory, TRd_start_loc)
+                 result = logicop.Xor(memory,TRd_start_loc, TRd_end_loc)
+                 addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
 
              elif operation == '4':
-                 result = logicop.Xnor(memory,TRd_start_loc)
-                 addres.addResult(result, memory, TRd_start_loc)
+                 result = logicop.Xnor(memory,TRd_start_loc, TRd_end_loc)
+                 addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
 
              elif operation == '5':
-                 result = logicop.Or(memory,TRd_start_loc)
-                 addres.addResult(result, memory, TRd_start_loc)
+                 result = logicop.Or(memory,TRd_start_loc, TRd_end_loc)
+                 addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
 
              elif operation == '6':
-                 result = logicop.Nor(memory,TRd_start_loc)
-                 addres.addResult(result, memory, TRd_start_loc)
+                 result = logicop.Nor(memory,TRd_start_loc,TRd_end_loc)
+                 addres.addResult(result, memory, TRd_start_loc,TRd_end_loc, source, sink)
 
              elif operation == '7':
-                 result = logicop.Not(memory,TRd_start_loc)
-                 addres.addResult(result, memory, TRd_start_loc)
+                 result = logicop.Not(memory,TRd_start_loc,TRd_end_loc)
+                 addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
+
 
     print(memory)
 

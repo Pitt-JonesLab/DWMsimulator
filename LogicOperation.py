@@ -3,16 +3,15 @@ from functools import reduce
 
 TRd = cfg.TRd
 L = cfg.L
-def And(memory, TRd_start_loc):
-
-    TRd_start_loc = L/2
-    print(TRd_start_loc)
+def And(memory, TRd_start_loc, TRd_end_loc):
     print(memory)
-    TRd_end_loc = TRd_start_loc + TRd - 1
+    print(TRd_start_loc)
+    print(TRd_end_loc)
     mem = memory[TRd_start_loc:TRd_end_loc]
+    print(mem)
     # Bitwise AND of List
     # Using reduce() + lambda + "&" operator
-    res = reduce(lambda x, y: bin(int(x)) & bin(int (y)), mem)
+    res = reduce(lambda x, y: (int(x)) & (int (y)), mem)
 
     return res
 
