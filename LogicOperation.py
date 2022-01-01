@@ -11,9 +11,9 @@ def And(memory, TRd_start_loc, TRd_end_loc):
     print(mem)
     # Bitwise AND of List
     # Using reduce() + lambda + "&" operator
-    res = reduce(lambda x, y: (int(x)) & (int (y)), mem)
+    #res = reduce(lambda x, y: (int(x)) & (int (y)), mem)
 
-    return res
+    return mem
 
 
 def Nand(memory, TRd_start_loc):

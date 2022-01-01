@@ -42,14 +42,14 @@ def main():
         # Ask the user for the instruction.
         instruction = input("Please enter the instruction, or enter 'quit': ")
 
-        if (instruction == 'write 0'):
+        if (instruction == 'write AP0'):
             writeport = TRd_start_loc
-            data = input("Enter the data to be inserted : ")
+            data = input("Enter position and data to be inserted : ")
             memory = adt.writezero(writeport, memory, data)
 
-        elif (instruction == 'write 1'):
+        elif (instruction == 'write AP1'):
             writeport = TRd_end_loc
-            data = input("Enter the data to be inserted : ")
+            data = input("Enter position and data to be inserted : ")
             memory = adt.writeone(writeport, memory, data)
 
         elif (instruction == 'Shift Right'):
