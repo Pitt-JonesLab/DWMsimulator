@@ -13,52 +13,35 @@ TRd_end_loc = TRd_start_loc + TRd - 1
 
 
 
-def writezero(writeport, memory, data_in_binary):
+def writezero(writeport, memory, data):
 
-    #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+    data_in_binary = ''.join(format(ord(x), 'b') for x in data)
     writeport = int(writeport)
     #print(writeport)
     #print(writeport + TRd)
     if (memory[writeport] != None):
 
-        for i in range(writeport + TRd , writeport, -1):
+        for i in range(writeport + TRd - 1 , writeport, -1):
             #print('writeport = ',writeport)
             # print('memory[{}] = {}'.format(i, memory[i]))
             # print('memory[{}] = {}'.format(i-1, memory[i-1]))
             memory[i] = memory[i - 1]
         memory[writeport] = data_in_binary
-        #for i in range(writeport + TRd, writeport, -1):
-        #print(writeport)
-        # for index in range(writeport, writeport + TRd -1):
-        #     if (memory[index] == None):
-        #         for i in range(writeport, index):
-        #             print(writeport)
-        #             print(index)
-        #             memory[i] = memory[i-1]
-        #
-        #
-        #         memory[writeport] = data_in_binary
-        #     break
     else:
         memory[writeport] = data_in_binary
 
     print(memory)
-    #print(writeport + TRd - 1)
-    #print(memory[writeport :writeport + TRd])
+
     return memory
 
-def writeone(writeport, memory, data_in_binary):
+def writeone(writeport, memory, data):
 
-    #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+    data_in_binary = ''.join(format(ord(x), 'b') for x in data)
 
     writeport = int(writeport)
-    #print(writeport - TRd + 1)
-    #print(writeport)
     if (memory[writeport] != None):
         # Shifting data left by 1 position
         for i in range(writeport - TRd + 1, writeport):
-            #print('memory[{}] = {}'.format(i, memory[i]))
-            #print('memory[{}] = {}'.format(i-1, memory[i+1]))
             memory[i] = memory[i + 1]
         memory[writeport] = data_in_binary
 
@@ -67,10 +50,93 @@ def writeone(writeport, memory, data_in_binary):
 
     print(memory)
 
-    # print(writeport)
-    # print(writeport - TRd)
-    # print(memory[writeport - TRd + 1 : writeport + 1])
-    #print(memory[writeport : writeport + TRd])
+    return memory
+
+def overwriteZero(writeport, memory, data):
+    #overwrite at left side (TRd start position
+    data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+    writeport = int(writeport)
+    memory[writeport] = data_in_binary
+
+    return memory
+
+def overwriteOne(writeport, memory, data):
+    #overwrite at right side(TRd end position)
+    data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+    writeport = int(writeport)
+    memory[writeport] = data_in_binary
+
+    return memory
+
+def writezero_shiftLE(writeport, memory, data):
+    #write at (left) TRd start and shift data towards the left padding.
+    data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+    writeport = int(writeport)
+    if (memory[writeport] != None):
+        # Shifting data left by 1 position towards left extremity
+        for i in range(L/2 - 1, writeport):
+            memory[i] = memory[i + 1]
+        memory[writeport] = data_in_binary
+
+    else:
+        memory[writeport] = data_in_binary
+
+    print(memory)
+
     return memory
 
 
+def writezero_shiftRE(writeport, memory, data):
+    #write at (left) TRd start and shift data towards the right padding.
+    data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+    writeport = int(writeport)
+
+    if (memory[writeport] != None):
+        # Shifting data right by 1 position towards the right extremity.
+        for i in range(L + L/2 - 1, writeport, -1):
+            memory[i] = memory[i - 1]
+        memory[writeport] = data_in_binary
+
+    else:
+        memory[writeport] = data_in_binary
+
+    print(memory)
+
+    return memory
+
+def writeone_shiftLE(writeport, memory, data_in_binary):
+    #write at (right) TRd end and shift data towards left padding.
+    data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+    writeport = int(writeport)
+
+    if (memory[writeport] != None):
+        # Shifting data left by 1 position
+        for i in range(L/2 - 1, writeport):
+            memory[i] = memory[i + 1]
+        memory[writeport] = data_in_binary
+
+    else:
+        memory[writeport] = data_in_binary
+
+    print(memory)
+
+    return memory
+
+def writeone_shiftRE(writeport, memory, data_in_binary):
+    #write at (right) TRd end and shift data towards right padding.
+    data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+
+    writeport = int(writeport)
+
+    if (memory[writeport] != None):
+        # Shifting data left by 1 position
+        for i in range(L + L/2 - 1, writeport, -1):
+            memory[i] = memory[i - 1]
+        memory[writeport] = data_in_binary
+
+    else:
+        memory[writeport] = data_in_binary
+
+    print(memory)
+
+    return memory

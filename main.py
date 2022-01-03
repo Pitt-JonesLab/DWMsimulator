@@ -42,15 +42,55 @@ def main():
         # Ask the user for the instruction.
         instruction = input("Please enter the instruction, or enter 'quit': ")
 
-        if (instruction == 'write AP0'):
+        if (instruction == 'AP0 AP1'):
+            #write at (left) TRd start and shift data right
             writeport = TRd_start_loc
-            data = input("Enter position and data to be inserted : ")
+            data = input("Enter data to be inserted : ")
             memory = adt.writezero(writeport, memory, data)
 
-        elif (instruction == 'write AP1'):
+        elif (instruction == 'AP1 AP0'):
+            #write at (right) TRd end and shift data left.
             writeport = TRd_end_loc
-            data = input("Enter position and data to be inserted : ")
+            data = input("Enter data to be inserted : ")
             memory = adt.writeone(writeport, memory, data)
+
+        elif (instruction == 'AP0'):
+            #overwrite at left side (TRd start position)
+            writeport = TRd_end_loc
+            data = input("Enter data to be inserted : ")
+            memory = adt.overwriteZero(writeport, memory, data)
+
+        elif (instruction == 'AP1'):
+            #overwrite at right side(TRd end position)
+            writeport = TRd_end_loc
+            data = input("Enter data to be inserted : ")
+            memory = adt.overwriteOne(writeport, memory, data)
+
+        elif (instruction == 'AP0 LE'):
+            #write at (left) TRd start and shift data towards the left padding.
+            writeport = TRd_end_loc
+            data = input("Enter data to be inserted : ")
+            memory = adt.writezero_shiftLE(writeport, memory, data)
+
+        elif (instruction == 'AP0 RE'):
+            #write at (left) TRd start and shift data towards the right padding.
+            writeport = TRd_end_loc
+            data = input("Enter data to be inserted : ")
+            memory = adt.writezero_shiftRE(writeport, memory, data)
+
+        elif (instruction == 'AP1 LE'):
+            #write at (right) TRd end and shift data towards left padding.
+            writeport = TRd_end_loc
+            data = input("Enter data to be inserted : ")
+            memory = adt.writeone_shiftLE(writeport, memory, data)
+
+        elif (instruction == 'AP1 RE'):
+            #write at (right) TRd end and shift data towards right padding.
+            writeport = TRd_end_loc
+            data = input("Enter data to be inserted : ")
+            memory = adt.writeone_shiftRE(writeport, memory, data)
+
+
 
         elif (instruction == 'Shift Right'):
              TRd_start_loc = TRd_start_loc + 1
@@ -68,9 +108,10 @@ def main():
 
 
         elif (instruction == 'operation'):
+             memory = [1, 1, 1, 1, 1, None, None, None, 1, 1, 1, 0, None, None, None, 0, 0, 0, 0, 0]
              operation = input("Enter the operations from the list: \n 1 : And \n 2 : Nand \n 3 : Xor \n 4 : Xnor \n 5 : Or \n 6 : Nor \n 7 : Not \n")
              source = input("Enter the source from the list : \n 1 : AP0 \n 2: AP1 \n")
-             sink = input("Enter the source from the list : \n 1 : AP0 \n 2: AP1 \n 3: LE \n 4: RE \n")
+             sink = input("Enter the sink from the list : \n 0: Overwrite \n 1 : AP0 \n 2: AP1 \n 3: LE \n 4: RE \n")
              if operation == '1':
                  result = logicop.And(memory,TRd_start_loc, TRd_end_loc)
                  addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
@@ -101,11 +142,6 @@ def main():
 
 
     print(memory)
-
-
-
-
-
 
 
 if __name__ == '__main__':

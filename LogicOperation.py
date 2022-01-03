@@ -3,31 +3,38 @@ from functools import reduce
 
 TRd = cfg.TRd
 L = cfg.L
+
 def And(memory, TRd_start_loc, TRd_end_loc):
     print(memory)
     print(TRd_start_loc)
     print(TRd_end_loc)
-    mem = memory[TRd_start_loc:TRd_end_loc]
+    TRd_start_loc = int(TRd_start_loc)
+    TRd_end_loc = int(TRd_end_loc)
+    mem = memory[TRd_start_loc:TRd_end_loc+1]
     print(mem)
     # Bitwise AND of List
     # Using reduce() + lambda + "&" operator
-    #res = reduce(lambda x, y: (int(x)) & (int (y)), mem)
+    res = reduce(lambda x, y: (int(x)) & (int (y)), mem)
 
-    return mem
+    return res
 
 
-def Nand(memory, TRd_start_loc):
-    TRd_end_loc = TRd_start_loc + TRd - 1
+def Nand(memory, TRd_start_loc, TRd_end_loc):
+    TRd_start_loc = int(TRd_start_loc)
+    TRd_end_loc = int(TRd_end_loc)
+    #TRd_end_loc = TRd_start_loc + TRd - 1
     mem = memory[TRd_start_loc:TRd_end_loc]
     # Calling and
-    Andresult = And(mem)
+    Andresult = And(mem,TRd_start_loc,TRd_end_loc)
     res = not (Andresult)  # complementing the and result
 
     return res
 
 
-def Xor(memory, TRd_start_loc):
-    TRd_end_loc = TRd_start_loc + TRd - 1
+def Xor(memory, TRd_start_loc, TRd_end_loc):
+    TRd_start_loc = int(TRd_start_loc)
+    TRd_end_loc = int(TRd_end_loc)
+    #TRd_end_loc = TRd_start_loc + TRd - 1
     mem = memory[TRd_start_loc:TRd_end_loc]
     # Bitwise XOR of List
     # Using reduce() + lambda + "&" operator
@@ -36,18 +43,22 @@ def Xor(memory, TRd_start_loc):
     return res
 
 
-def Xnor(memory, TRd_start_loc):
-    TRd_end_loc = TRd_start_loc + TRd - 1
+def Xnor(memory, TRd_start_loc, TRd_end_loc):
+    TRd_start_loc = int(TRd_start_loc)
+    TRd_end_loc = int(TRd_end_loc)
+    #TRd_end_loc = TRd_start_loc + TRd - 1
     mem = memory[TRd_start_loc:TRd_end_loc]
     # Calling Xnor
-    Xorresult = Xor(mem)
+    Xorresult = Xor(mem,TRd_start_loc, TRd_end_loc)
     res = not (Xorresult)  # complementing the and result
 
     return res
 
 
-def Or(memory, TRd_start_loc):
-    TRd_end_loc = TRd_start_loc + TRd - 1
+def Or(memory, TRd_start_loc, TRd_end_loc):
+    TRd_start_loc = int(TRd_start_loc)
+    TRd_end_loc = int(TRd_end_loc)
+    #TRd_end_loc = TRd_start_loc + TRd - 1
     mem = memory[TRd_start_loc:TRd_end_loc]
     # Bitwise OR of List
     # Using reduce() + lambda + "&" operator
@@ -56,14 +67,26 @@ def Or(memory, TRd_start_loc):
     return res
 
 
-def Nor(memory, TRd_start_loc):
-    TRd_end_loc = TRd_start_loc + TRd - 1
+def Nor(memory, TRd_start_loc, TRd_end_loc):
+    TRd_start_loc = int(TRd_start_loc)
+    TRd_end_loc = int(TRd_end_loc)
+    #TRd_end_loc = TRd_start_loc + TRd - 1
     mem = memory[TRd_start_loc:TRd_end_loc]
     # Calling Nor
-    Orresult = Or(mem)
+    Orresult = Or(mem,TRd_start_loc,TRd_end_loc)
     res = not (Orresult)  # complementing the and result
 
     return res
 
 def Not(memory):
     None
+
+
+
+
+##DRIVER CODE for debugging:
+# memory = [1,1,1,1,1,None,None,None,1,1,1,1,None,None,None,0,0,0,0,0]
+# TRd_start_loc = 8
+# TRd_end_loc = 11
+# res = And(memory,TRd_start_loc, TRd_end_loc)
+# print("The result is : ", res)
