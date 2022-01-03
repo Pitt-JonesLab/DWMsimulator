@@ -100,6 +100,8 @@ def main():
              TRd_start_loc = TRd_start_loc - 1
              TRd_end_loc = TRd_start_loc + TRd - 1
 
+
+
         elif (instruction == 'Read 0'):
             print(memory[TRd_start_loc])
 
@@ -137,7 +139,7 @@ def main():
                  addres.addResult(result, memory, TRd_start_loc,TRd_end_loc, source, sink)
 
              elif operation == '7':
-                 result = logicop.Not(memory,TRd_start_loc,TRd_end_loc)
+                 result = logicop.Not(memory,TRd_start_loc, TRd_end_loc)
                  addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
 
 
