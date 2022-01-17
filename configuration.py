@@ -17,7 +17,7 @@
 TRd = 4      # Enter the TRd value between 4 and 7
 TRd_start_loc = 4    # Enter the start loc of TRd
 TRd_end_loc = TRd_start_loc + TRd - 1
-bit_length = 2    # Enter the bit size of the inputs from the following 512, 1024, 2048, 4096
+bit_length = 4    # Enter the bit size of the inputs from the following 512, 1024, 2048, 4096
 L = 10         # Enter the size of the memory
 memory = [None] * (2*L)
 operation = 1      # Enter the operations from the list:

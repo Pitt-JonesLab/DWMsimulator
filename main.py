@@ -56,7 +56,7 @@ def main():
 
         elif (instruction == 'AP0'):
             #overwrite at left side (TRd start position)
-            writeport = TRd_end_loc
+            writeport = TRd_start_loc
             data = input("Enter data to be inserted : ")
             memory = adt.overwriteZero(writeport, memory, data)
 
@@ -68,7 +68,7 @@ def main():
 
         elif (instruction == 'AP0 LE'):
             #write at (left) TRd start and shift data towards the left padding.
-            writeport = TRd_end_loc
+            writeport = TRd_start_loc
             data = input("Enter data to be inserted : ")
             memory = adt.writezero_shiftLE(writeport, memory, data)
 
@@ -138,12 +138,12 @@ def main():
                  result = logicop.Nor(memory,TRd_start_loc,TRd_end_loc)
                  addres.addResult(result, memory, TRd_start_loc,TRd_end_loc, source, sink)
 
-             elif operation == '7':
-                 result = logicop.Not(memory,TRd_start_loc, TRd_end_loc)
-                 addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
+             # elif operation == '7':
+             #     result = logicop.Not(memory,TRd_start_loc, TRd_end_loc)
+             #     addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
 
 
-    print(memory)
+             print(memory)
 
 
 if __name__ == '__main__':
