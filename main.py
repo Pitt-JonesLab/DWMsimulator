@@ -103,9 +103,11 @@ def main():
 
 
         elif (instruction == 'Read 0'):
+            TRd_start_loc = int(TRd_start_loc)
             print(memory[TRd_start_loc])
 
         elif(instruction == 'Read 1'):
+            TRd_end_loc = int(TRd_end_loc)
             print(memory[TRd_end_loc])
 
 
