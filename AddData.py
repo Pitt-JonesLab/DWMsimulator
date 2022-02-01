@@ -71,6 +71,30 @@ def overwriteOne(writeport, memory, data_in_binary):
 
     return memory
 
+def shift_writezero(memory, data_in_binary):
+    # write at (right) TRd end and shift data towards right padding.
+    # data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+
+    writeport = int(L/2)
+    memory[writeport] = data_in_binary
+
+    print(memory)
+
+    return memory
+
+def shift_writeone(memory, data_in_binary):
+    # write at (right) TRd end and shift data towards right padding.
+    # data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+
+    writeport = int(L + L/2)
+    memory[writeport] = data_in_binary
+
+    print(memory)
+
+    return memory
+
+
+
 def writezero_shiftLE(writeport, memory, data_in_binary):
     #write at (left) TRd start and shift data towards the left padding.
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
@@ -78,7 +102,7 @@ def writezero_shiftLE(writeport, memory, data_in_binary):
     if (memory[writeport] != None):
         # Shifting data left by 1 position towards left extremity
         #print(range((L/2 - 1), writeport))
-        start = int(L/2 - 1)
+        start = 0
         for i in range(start, writeport):
             memory[i] = memory[i + 1]
         memory[writeport] = data_in_binary
@@ -98,7 +122,7 @@ def writezero_shiftRE(writeport, memory, data_in_binary):
 
     if (memory[writeport] != None):
         # Shifting data right by 1 position towards the right extremity.
-        start = int(L + L/2 - 1)
+        start = int(2*L)
         for i in range(start, writeport, -1):
             memory[i] = memory[i - 1]
         memory[writeport] = data_in_binary
@@ -117,7 +141,7 @@ def writeone_shiftLE(writeport, memory, data_in_binary):
 
     if (memory[writeport] != None):
         # Shifting data left by 1 position
-        start = int(L/2 - 1)
+        start = 0
         for i in range(start, writeport):
             memory[i] = memory[i + 1]
         memory[writeport] = data_in_binary
@@ -137,7 +161,7 @@ def writeone_shiftRE(writeport, memory, data_in_binary):
 
     if (memory[writeport] != None):
         # Shifting data left by 1 position
-        start = int(L + L/2 - 1)
+        start = int(2*L)
         for i in range(start, writeport, -1):
             memory[i] = memory[i - 1]
         memory[writeport] = data_in_binary
@@ -148,3 +172,4 @@ def writeone_shiftRE(writeport, memory, data_in_binary):
     print(memory)
 
     return memory
+

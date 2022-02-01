@@ -38,12 +38,29 @@ def Xor(memory, TRd_start_loc, TRd_end_loc):
     TRd_start_loc = int(TRd_start_loc)
     TRd_end_loc = int(TRd_end_loc)
     #TRd_end_loc = TRd_start_loc + TRd - 1
-    mem = memory[TRd_start_loc:TRd_end_loc]
+    mem = memory[TRd_start_loc:TRd_end_loc+1]
     # Bitwise XOR of List
     # Using reduce() + lambda + "&" operator
-    res = reduce(lambda x, y: x ^ y, mem)
+    # res = reduce(lambda x, y: x ^ y, mem)
+    # print (TRd_start_loc)
+    # print(TRd_end_loc)
+    res = []
+    if TRd == 4:
+        for m in zip(mem[0], mem[1], mem[2], mem[3]):
+            count = m.count('1')
 
-    return res
+            if (count % 2 == 0):
+                res.append(0)
+            else:
+                res.append(1)
+
+    # elif TRd == 5:
+    #
+    # elif TRd == 6:
+    #
+    # elif TRd == 7:
+
+    return res[2:]
 
 
 def Xnor(memory, TRd_start_loc, TRd_end_loc):
@@ -77,25 +94,20 @@ def Nor(memory, TRd_start_loc, TRd_end_loc):
     mem = memory[TRd_start_loc:TRd_end_loc]
     # Calling Nor
     Orresult = Or(mem,TRd_start_loc,TRd_end_loc)
-    res = not (Orresult)  # complementing the and result
+    res = Not(Orresult)  # complementing the and result
 
     return res
 
-# def Not(res):
-#     # Loop to find the string
-#     # of desired length
-#     for i in range(bit_length):
-#         # randint function to generate
-#         # 0, 1 randomly and converting
-#         # the result into str
-#         temp = str(1)
-#
-#         # Concatenation the random 0, 1
-#         # to the final result
-#         key1 += temp
-#
-#
-#     return result
+def Not(res):
+    result = []
+    for i in res:
+       if i == '1':
+           result.append(0)
+       else:
+           result.append(1)
+
+
+    return result
 
 
 
@@ -143,7 +155,7 @@ data2 = bin(12)
 data3 =bin(14)
 
 
-memory = ['0b1111','0b1111','0b1111','0b1111','0b1111',None,None,None,9,14,12,14,None,None,None, '0b1110','0b1110','0b1110','0b1110','0b1110']
+memory = ['0b1111','0b1111','0b1111','0b1111','0b1111',None,None,None,data0,data1,data2,data3,None,None,None, '0b1110','0b1110','0b1110','0b1110','0b1110']
 print(memory)
 print(data0)
 print(data1)
@@ -154,4 +166,4 @@ TRd_start_loc = 8
 TRd_end_loc = 11
 res = Xor(memory,TRd_start_loc, TRd_end_loc)
 # res = Not(12)
-print("The result of XOR operation is : ", bin(res))
+print("The result of XOR operation is : ", (res))

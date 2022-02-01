@@ -34,6 +34,7 @@ def main():
     TRd_end_loc = cfg.TRd_end_loc + (L/2) - 1
     #print(TRd_end_loc)
 
+
     # Setting instruction to something other than 'quit'.
     instruction = ''
 
@@ -53,6 +54,24 @@ def main():
             writeport = TRd_end_loc
             data = input("Enter data to be inserted : ")
             memory = adt.writeone(writeport, memory, data)
+
+        elif (instruction == 'write at Address 0'):
+            #write at (right) TRd end and shift data left.
+            data = input("Enter data to be inserted : ")
+            memory = adt.shift_writezero(memory, data)
+            TRd_start_loc = int(L / 2 )
+            TRd_end_loc = TRd + TRd_start_loc
+            print('TRd_start_loc:', TRd_start_loc)
+            print('TRd_end_loc:', TRd_end_loc)
+
+        elif (instruction == 'write at Address 1'):
+            #write at (right) TRd end and shift data left.
+            data = input("Enter data to be inserted : ")
+            memory = adt.shift_writeone(memory, data)
+            TRd_start_loc = int(L/2 + L)
+            TRd_end_loc = TRd + TRd_start_loc
+            print('TRd_start_loc:', TRd_start_loc)
+            print('TRd_end_loc:', TRd_end_loc)
 
         elif (instruction == 'AP0'):
             #overwrite at left side (TRd start position)
