@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="pavia@131.247.15.236:22 password" remoteFilesAllowedToDisappearOnAutoupload="false" autoUploadExternalChanges="true">
+  <component name="PublishConfigData" autoUpload="Always" remoteFilesAllowedToDisappearOnAutoupload="false" autoUploadExternalChanges="true">
     <serverData>
-      <paths name="pavia@131.247.15.236:22 password">
+      <paths name="pavia@131.247.15.236:22">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/pavia/Documents/Python codes/AES" local="$PROJECT_DIR$" />
+            <mapping deploy="/Documents/Python codes/AES" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
