@@ -14,13 +14,20 @@
 
 
 ## User Inputs
-TRd = 4      # Enter the TRd value between 4 and 7
-TRd_start_loc = 4    # Enter the start loc of TRd
+TRd = 4     # Enter the TRd value between 4 and 7
+TRd_start_loc = 0    # Enter the start loc of TRd
 TRd_end_loc = TRd_start_loc + TRd - 1
-bit_length = 4    # Enter the bit size of the inputs from the following 512, 1024, 2048, 4096
+bit_length = 128    # Enter the bit size of the inputs from the following 512, 1024, 2048, 4096
 L = 32         # Enter the size of the memory
 memory = [None] * (2*L)
-operation = 1      # Enter the operations from the list:
+memory1 = [None] * (2*L)
+DBC_number = 2  #Enter the number of DBC's in use
+# for i in range(DBC_number):
+#     memory.append(m)
+Local_row_buffer = [0] * (512) #Should Store upto 512 bits
+
+
+# operation = 1      # Enter the operations from the list:
                    # 1 : And
                    # 2 : Nand
                    # 3 : Xor
@@ -60,12 +67,12 @@ def rand_key(p):
 
     return (key1)
 
-#Driver Code
-n = bit_length #size of random binary number to be filled before and after the momory in task
-for i in range(2*L):
-    if ((i <= L/2 - 1) or (i >= L + L/2)):
-        str1 = rand_key(n)
-        memory[i] = str1
+# #Driver Code
+# n = bit_length #size of random binary number to be filled before and after the memory in task
+# for i in range(2*L):
+#     if ((i <= L/2 - 1) or (i >= L + L/2)):
+#         str1 = rand_key(n)
+#         memory[i] = str1
         #memory.append(int(str1))
 
 #print(memory)

@@ -44,15 +44,15 @@ def Xor(memory, TRd_start_loc, TRd_end_loc):
     # res = reduce(lambda x, y: x ^ y, mem)
     # print (TRd_start_loc)
     # print(TRd_end_loc)
-    res = []
+    res = ''
     if TRd == 4:
         for m in zip(mem[0], mem[1], mem[2], mem[3]):
             count = m.count('1')
 
             if (count % 2 == 0):
-                res.append(0)
+                res += '0'
             else:
-                res.append(1)
+                res += '1'
 
     # elif TRd == 5:
     #
@@ -60,7 +60,7 @@ def Xor(memory, TRd_start_loc, TRd_end_loc):
     #
     # elif TRd == 7:
 
-    return res[2:]
+    return res
 
 
 def Xnor(memory, TRd_start_loc, TRd_end_loc):
@@ -155,15 +155,15 @@ data2 = bin(12)
 data3 =bin(14)
 
 
-memory = ['0b1111','0b1111','0b1111','0b1111','0b1111',None,None,None,data0,data1,data2,data3,None,None,None, '0b1110','0b1110','0b1110','0b1110','0b1110']
-print(memory)
-print(data0)
-print(data1)
-print(data2)
-print(data3)
+# memory = ['0b1111','0b1111','0b1111','0b1111','0b1111',None,None,None,data0,data1,data2,data3,None,None,None, '0b1110','0b1110','0b1110','0b1110','0b1110']
+# print(memory)
+# print(data0)
+# print(data1)
+# print(data2)
+# print(data3)
 
 TRd_start_loc = 8
 TRd_end_loc = 11
-res = Xor(memory,TRd_start_loc, TRd_end_loc)
+# res = Xor(memory,TRd_start_loc, TRd_end_loc)
 # res = Not(12)
-print("The result of XOR operation is : ", (res))
+# print("The result of XOR operation is : ", (res))

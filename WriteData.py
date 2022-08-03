@@ -17,20 +17,14 @@ def writezero(writeport, memory, data_in_binary):
 
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
     writeport = int(writeport)
-    #print(writeport)
-    #print(writeport + TRd)
+
     if (memory[writeport] != None):
 
-        for i in range(writeport + TRd - 1 , writeport, -1):
-            #print('writeport = ',writeport)
-            # print('memory[{}] = {}'.format(i, memory[i]))
-            # print('memory[{}] = {}'.format(i-1, memory[i-1]))
+        for i in range(writeport + TRd - 1, writeport, -1):
             memory[i] = memory[i - 1]
         memory[writeport] = data_in_binary
     else:
         memory[writeport] = data_in_binary
-
-    print(memory)
 
     return memory
 
@@ -47,8 +41,6 @@ def writeone(writeport, memory, data_in_binary):
 
     else:
         memory[writeport] = data_in_binary
-
-    print(memory)
 
     return memory
 
@@ -71,27 +63,25 @@ def overwriteOne(writeport, memory, data_in_binary):
 
     return memory
 
-def shift_writezero(memory, data_in_binary):
-    # write at (right) TRd end and shift data towards right padding.
-    # data_in_binary = ''.join(format(ord(x), 'b') for x in data)
-
-    writeport = int(L/2)
-    memory[writeport] = data_in_binary
-
-    print(memory)
-
-    return memory
-
-def shift_writeone(memory, data_in_binary):
-    # write at (right) TRd end and shift data towards right padding.
-    # data_in_binary = ''.join(format(ord(x), 'b') for x in data)
-
-    writeport = int(L + L/2)
-    memory[writeport] = data_in_binary
-
-    print(memory)
-
-    return memory
+# def shift_writezero(memory, data_in_binary):
+#     # write at (right) TRd end and shift data towards right padding.
+#     # data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+#
+#     writeport = int(L/2)
+#     memory[writeport] = data_in_binary
+#
+#     return memory
+#
+# def shift_writeone(memory, data_in_binary):
+#     # write at (right) TRd end and shift data towards right padding.
+#     # data_in_binary = ''.join(format(ord(x), 'b') for x in data)
+#
+#     writeport = int(L + L/2)
+#     memory[writeport] = data_in_binary
+#
+#     print(memory)
+#
+#     return memory
 
 
 

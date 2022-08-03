@@ -1,5 +1,5 @@
 import configuration as cfg
-import AddData as addData
+import WriteData as addData
 TRd = cfg.TRd
 L = cfg.L
 
@@ -41,4 +41,4 @@ def addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink):
 
     
     ## printing the final memory
-    print('This is the memory after the adding the result', memory)
+    # print('This is the memory after the adding the result', memory)
