@@ -23,9 +23,11 @@ class DBC():
     memory = [None] * (2 * memory_size)
     Local_row_buffer = [0] * (512)
 
-    def __init__(self, instruction, data):
+    def __init__(self, instruction, loc, data):
         self.instruction = instruction
         self.data = data
+        self.loc = loc
+
 
 
     def controller(self):
@@ -80,11 +82,11 @@ class DBC():
 
         elif (self.instruction == 'SR'):
             self.TRd_head = self.TRd_head + 1
-            self.TRd_end_loc = self.TRd_start_loc + self.TRd_size - 1
+            self.TRd_end_loc = self.TRd_head + self.TRd_size - 1
 
         elif (self.instruction == 'SL'):
             self.TRd_head = self.TRd_head - 1
-            self.TRd_end_loc = self.TRd_start_loc + self.TRd_size - 1
+            self.TRd_end_loc = self.TRd_head + self.TRd_size - 1
 
 
         elif (self.instruction == 'R0'):
@@ -98,15 +100,15 @@ class DBC():
         # sink = input("Enter the sink from the list : \n 0: Overwrite \n 1 : AP0 \n 2: AP1 \n 3: LE \n 4: RE \n")
         elif (self.instruction == 'And'):
             result = logicop.And(self.memory, self.TRd_head, self.TRd_end_loc)
-            addres.addResult(result, self.memory, self.TRd_head, self.TRd_end_loc, self.source, sink)
+            addres.addResult(result, self.memory, self.TRd_head, self.TRd_end_loc, self.source, self.sink)
 
         elif self.instruction == 'Nand':
-            result = logicop.Nand(memory, TRd_head, TRd_end_loc)
-            addres.addResult(result, memory, TRd_head, TRd_end_loc, source, sink)
+            result = logicop.Nand(self.memory, self.TRd_head, self.TRd_end_loc)
+            addres.addResult(result, self.memory, self.TRd_head, self.TRd_end_loc, self.source, self.sink)
 
         elif self.instruction == 'Xor':
-            result = logicop.Xor(memory, TRd_head, TRd_end_loc)
-            addres.addResult(result, memory, TRd_head, TRd_end_loc, source, sink)
+            result = logicop.Xor(self.memory, self.TRd_head, self.TRd_end_loc)
+            addres.addResult(result, self.memory, self.TRd_head, self.TRd_end_loc, self.source, self.sink)
 
         elif self.instruction == 'Xnor':
             result = logicop.Xnor(memory, TRd_head, TRd_end_loc)
