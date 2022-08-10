@@ -18,112 +18,151 @@ class DBC():
     TRd_size = 4
     bit_length = 512
     memory_size = 32
-    TRd_head = 0
-    TRd_end_loc = TRd_head + TRd_size - 1
-    memory = [None] * (2 * memory_size)
+    global memory
+    memory = [[0 for _ in range(bit_length)] for _ in range(memory_size*2)]
     Local_row_buffer = [0] * (512)
 
-    def __init__(self, instruction, loc, data):
-        self.instruction = instruction
-        self.data = data
-        self.loc = loc
+    def __init__(self):
+        '''This is a single instance of DBC'''
+
+    def controller(self, row_number, instruction, nanowire_num_start_pos = 0, nanowire_num_end_pos = 511, data_hex = None):
+
+        if data_hex != None:
+            # Convert hex data to bin
+            data_hex_size = len(data_hex) * 4
+            data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
+            Local_row_buffer = data_bin
 
 
-
-    def controller(self):
-        if (self.instruction == 'W AP0 AP1'):
+        # Write instruction
+        if (instruction == 'W AP0 AP1'):
             # write at (left) TRd start loc and shift data right within the TRd space
-            self.memory = adt.writezero(self.TRd_head, self.memory, self.data)
+            cycles = adt.writezero(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer)
 
-        elif (self.instruction == ' W AP1 AP0'):
+        elif (instruction == 'W AP1 AP0'):
             # write at (right) TRd end loc and shift data left within the TRd space.
-            self.memory = adt.writeone(self.TRd_head, self.memory, self.data)
+            cycles = adt.writeone(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer)
 
-        # elif (self.instruction == 'write at Address 0'):
-        #     # write at (right) TRd end and shift data left.
-        #
-        #     memory = adt.shift_writezero(memory, data)
-        #     TRd_start_loc = int(L / 2)
-        #     TRd_end_loc = TRd + TRd_start_loc
-        #
-        #
-        # elif (instruction == 'write at Address 1'):
-        #     # write at (right) TRd end and shift data left.
-        #
-        #     memory = adt.shift_writeone(memory, data)
-        #     TRd_start_loc = int(L / 2 + L)
-        #     TRd_end_loc = TRd + TRd_start_loc
-
-
-        elif (self.instruction == 'W AP0'):
+        elif (instruction == 'W AP0'):
             # overwrite at left side (TRd start position)
-            self.memory = adt.overwriteZero(self.TRd_head, self.memory, self.data)
+            cycles = adt.overwriteZero(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer)
 
-        elif (self.instruction == 'W AP1'):
+        elif (instruction == 'W AP1'):
             # overwrite at right side(TRd end position)
-            self.memory = adt.overwriteOne(self.writeport, self.memory, self.data)
+            cycles = adt.overwriteOne(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer)
 
-        elif (self.instruction == 'W AP0 LE'):
+        elif (instruction == 'W AP0 LE'):
             # write at (left) TRd start and shift data towards the left padding.
-            self.memory = adt.writezero_shiftLE(self.TRd_head, self.memory, self.data)
+            cycles = adt.writezero_shiftLE(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer)
 
-        elif (self.instruction == 'W AP0 RE'):
+        elif (instruction == 'W AP0 RE'):
             # write at (left) TRd start and shift data towards the right padding.
-            self.memory = adt.writezero_shiftRE(self.TRd_head, self.memory, self.data)
+            cycles = adt.writezero_shiftRE(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer)
 
-        elif (self.instruction == 'W AP1 LE'):
+        elif (instruction == 'W AP1 LE'):
             # write at (right) TRd end and shift data towards left padding.
-            self.memory = adt.writeone_shiftLE(self.TRd_head, self.memory, self.data)
+            cycles = adt.writeone_shiftLE(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer)
 
-        elif (self.instruction == 'W AP1 RE'):
+        elif (instruction == 'W AP1 RE'):
             # write at (right) TRd end and shift data towards right padding.
-            self.memory = adt.writeone_shiftRE(self.TRd_head, self.memory, self.data)
+            cycles = adt.writeone_shiftRE(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer)
 
+        # # shift Instructions
+        # elif (instruction == 'SR'):
+        #     cycles = 1
+        #     self.row_number = self.row_number + 1
+        #     self.TRd_end_loc = self.row_number + self.TRd_size - 1
 
-        elif (self.instruction == 'SR'):
-            self.TRd_head = self.TRd_head + 1
-            self.TRd_end_loc = self.TRd_head + self.TRd_size - 1
+        # elif (instruction == 'SL'):
+        #     self.row_number = self.row_number - 1
+        #     self.TRd_end_loc = self.row_number + self.TRd_size - 1
+        #
+        # elif (instruction == 'SU AP0 8'):
+        #     for i in range(0,8):
+        #         memory[][] =  memory[nanowire_num_start_pos][]
+        #
+        # elif (instruction == 'SU AP0 32'):
+        #     for i in range(0, 32):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SU AP0 88'):
+        #     for i in range(0, 88):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SD AP1 8'):
+        #     for i in range(0, 8):
+        #
+        # elif (instruction == 'SD AP1 32'):
+        #     for i in range(0, 32):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SD AP1 88'):
+        #     for i in range(0, 88):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SU AP0 8'):
+        #     for i in range(0, 8):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SU AP0 32'):
+        #     for i in range(0, 32):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SU AP0 88'):
+        #     for i in range(0, 88):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SD AP1 8'):
+        #     for i in range(0, 8):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SD AP1 32'):
+        #     for i in range(0, 32):
+        #         memory[][] = memory[][]
+        #
+        # elif (instruction == 'SD AP1 88'):
+        #     for i in range(0, 88):
+        #         memory[][] = memory[][]
+        #
+        # # Read instruction
+        # elif (instruction == 'R0'):
+        #     Local_row_buffer = int(self.row_number)
+        #     Local_row_buffer = memory[][]
+        #
+        #
+        # elif (instruction == 'R1'):
+        #     self.TRd_end_loc = row_number + self.TRd_size
+        #     Local_row_buffer = memory [][]
+        #
+        # elif (instruction == 'And'):
+        #     Local_row_buffer = logicop.And(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
+        #
+        #
+        # elif instruction == 'Nand':
+        #     Local_row_buffer = logicop.Nand(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
+        #
+        #
+        # elif instruction == 'Xor':
+        #     Local_row_buffer = logicop.Xor(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
+        #
+        #
+        # elif instruction == 'Xnor':
+        #     Local_row_buffer = logicop.Xnor(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
+        #
+        #
+        # elif instruction == 'Or':
+        #     Local_row_buffer = logicop.Or(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
+        #
+        #
+        # elif instruction == 'Nor':
+        #     Local_row_buffer = logicop.Nor(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
+        #
+        #
+        # elif instruction == 'Not':
+        #     Local_row_buffer = logicop.Not(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
+        #
+        #
+        #
 
-        elif (self.instruction == 'SL'):
-            self.TRd_head = self.TRd_head - 1
-            self.TRd_end_loc = self.TRd_head + self.TRd_size - 1
-
-
-        elif (self.instruction == 'R0'):
-            self.TRd_head = int(self.TRd_head)
-
-
-        elif (self.instruction == 'R1'):
-            self.TRd_end_loc = int(self.TRd_end_loc)
-
-        # source = input("Enter the source from the list : \n 1 : AP0 \n 2: AP1 \n")
-        # sink = input("Enter the sink from the list : \n 0: Overwrite \n 1 : AP0 \n 2: AP1 \n 3: LE \n 4: RE \n")
-        elif (self.instruction == 'And'):
-            result = logicop.And(self.memory, self.TRd_head, self.TRd_end_loc)
-            addres.addResult(result, self.memory, self.TRd_head, self.TRd_end_loc, self.source, self.sink)
-
-        elif self.instruction == 'Nand':
-            result = logicop.Nand(self.memory, self.TRd_head, self.TRd_end_loc)
-            addres.addResult(result, self.memory, self.TRd_head, self.TRd_end_loc, self.source, self.sink)
-
-        elif self.instruction == 'Xor':
-            result = logicop.Xor(self.memory, self.TRd_head, self.TRd_end_loc)
-            addres.addResult(result, self.memory, self.TRd_head, self.TRd_end_loc, self.source, self.sink)
-
-        elif self.instruction == 'Xnor':
-            result = logicop.Xnor(memory, TRd_head, TRd_end_loc)
-            addres.addResult(result, memory, TRd_head, TRd_end_loc, source, sink)
-
-        elif self.instruction == 'Or':
-            result = logicop.Or(memory, TRd_head, TRd_end_loc)
-            addres.addResult(result, memory, TRd_head, TRd_end_loc, source, sink)
-
-        elif self.instruction == 'Nor':
-            result = logicop.Nor(memory, TRd_head, TRd_end_loc)
-            addres.addResult(result, memory, TRd_head, TRd_end_loc, source, sink)
-
-            # elif operation == '7':
-            #     result = logicop.Not(memory,TRd_start_loc, TRd_end_loc)
-            #     addres.addResult(result, memory, TRd_start_loc, TRd_end_loc, source, sink)
 
 

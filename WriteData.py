@@ -13,22 +13,22 @@ TRd_end_loc = TRd_start_loc + TRd - 1
 
 
 
-def writezero(writeport, memory, data_in_binary):
+def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
 
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
-    writeport = int(writeport)
+    writeport = int(row_number)
 
     if (memory[writeport] != None):
 
         for i in range(writeport + TRd - 1, writeport, -1):
             memory[i] = memory[i - 1]
-        memory[writeport] = data_in_binary
+        memory[writeport] = Local_row_buffer
     else:
-        memory[writeport] = data_in_binary
+        memory[writeport] = Local_row_buffer
 
-    return memory
+    return 1
 
-def writeone(writeport, memory, data_in_binary):
+def writeone(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
 
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
 
@@ -44,7 +44,7 @@ def writeone(writeport, memory, data_in_binary):
 
     return memory
 
-def overwriteZero(writeport, memory, data_in_binary):
+def overwriteZero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     #overwrite at left side (TRd start position
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
     writeport = int(writeport)
@@ -53,7 +53,7 @@ def overwriteZero(writeport, memory, data_in_binary):
 
     return memory
 
-def overwriteOne(writeport, memory, data_in_binary):
+def overwriteOne(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     #overwrite at right side(TRd end position)
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
     writeport = int(writeport)
@@ -85,7 +85,7 @@ def overwriteOne(writeport, memory, data_in_binary):
 
 
 
-def writezero_shiftLE(writeport, memory, data_in_binary):
+def writezero_shiftLE(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     #write at (left) TRd start and shift data towards the left padding.
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
     writeport = int(writeport)
@@ -105,7 +105,7 @@ def writezero_shiftLE(writeport, memory, data_in_binary):
     return memory
 
 
-def writezero_shiftRE(writeport, memory, data_in_binary):
+def writezero_shiftRE(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     #write at (left) TRd start and shift data towards the right padding.
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
     writeport = int(writeport)
@@ -124,7 +124,7 @@ def writezero_shiftRE(writeport, memory, data_in_binary):
 
     return memory
 
-def writeone_shiftLE(writeport, memory, data_in_binary):
+def writeone_shiftLE(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     #write at (right) TRd end and shift data towards left padding.
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
     writeport = int(writeport)
@@ -143,7 +143,7 @@ def writeone_shiftLE(writeport, memory, data_in_binary):
 
     return memory
 
-def writeone_shiftRE(writeport, memory, data_in_binary):
+def writeone_shiftRE(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     #write at (right) TRd end and shift data towards right padding.
     #data_in_binary = ''.join(format(ord(x), 'b') for x in data)
 
