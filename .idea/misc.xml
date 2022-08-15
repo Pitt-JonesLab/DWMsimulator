@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/AddResult.py" />
+    <file url="file://$PROJECT_DIR$/AWS_Encryption.py" />
+    <file url="file://$PROJECT_DIR$/configuration.py" />
+    <file url="file://$PROJECT_DIR$/controller.py" />
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.6.9 (sftp://pavia@131.247.15.236:22/usr/bin/python)" project-jdk-type="Python SDK" />
 </project>

@@ -24,8 +24,6 @@ memory1 = [None] * (2*L)
 DBC_number = 2  #Enter the number of DBC's in use
 # for i in range(DBC_number):
 #     memory.append(m)
-Local_row_buffer = [0] * (512) #Should Store upto 512 bits
-
 
 # operation = 1      # Enter the operations from the list:
                    # 1 : And

@@ -1,10 +1,10 @@
-import configuration as cfg
+# import configuration as cfg
 from functools import reduce
 
 
-TRd = cfg.TRd
-L = cfg.L
-bit_length = cfg.bit_length
+# TRd = cfg.TRd
+# L = cfg.L
+# bit_length = cfg.bit_length
 
 def And(memory, TRd_start_loc, TRd_end_loc):
     # print(memory)
