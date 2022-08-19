@@ -2,16 +2,10 @@
 This is the script that uses the DWM simulator to run the AES algorithm.
 '''
 import xlrd
-from main_controller import controller
+from main_controller import DBC
 
-class DBC():
-    TRd_size = 4
 
-    def __init__(self, ):
-        '''This is a single instance of DBC'''
-        self.bit_length = 512
-        self.memory_size = 32
-        self.memory = [[0 for _ in range(self.bit_length)] for _ in range(self.memory_size * 2)]
+
 
 # Creating 16 DBC objects
 dbcs = [DBC() for i in range(16)]
@@ -38,67 +32,69 @@ for i in range(1, nrow):
     cycles = 0
     if DBC_number == '0000':
         dbc = dbcs[0]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '0001':
         dbc = dbcs[1]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '0010':
         dbc = dbcs[2]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '0011':
         dbc = dbcs[3]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '0100':
         dbc = dbcs[4]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '0101':
         dbc = dbcs[5]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '0110':
         dbc = dbcs[6]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '0111':
         dbc = dbcs[7]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '1000':
         dbc = dbcs[8]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '0101':
         dbc = dbcs[9]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '1010':
         dbc = dbcs[10]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '1011':
         dbc = dbcs[11]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '1100':
         dbc = dbcs[12]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '1101':
         dbc = dbcs[13]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '1110':
         dbc = dbcs[14]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
     elif DBC_number == '1111':
         dbc = dbcs[15]
-        cycles = controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles = dbc.controller(dbc.memory, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
         total_cycles += cycles
 
 print("The total number of cycles to run AES is", total_cycles)

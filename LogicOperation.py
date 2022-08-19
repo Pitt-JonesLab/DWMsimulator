@@ -1,17 +1,9 @@
-# import configuration as cfg
 from functools import reduce
 
+def And(memory, TRd_head, nanowire_num_start_pos, nanowire_num_end_pos):
+    TRd_head = int(TRd_head)
+    TRd_tail = TRd_head + 4
 
-# TRd = cfg.TRd
-# L = cfg.L
-# bit_length = cfg.bit_length
-
-def And(memory, TRd_start_loc, TRd_end_loc):
-    # print(memory)
-    # print(TRd_start_loc)
-    # print(TRd_end_loc)
-    TRd_start_loc = int(TRd_start_loc)
-    TRd_end_loc = int(TRd_end_loc)
     mem = memory[TRd_start_loc:TRd_end_loc+1]
     #print(mem)
     # Bitwise AND of List
