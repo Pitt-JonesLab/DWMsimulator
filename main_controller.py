@@ -20,15 +20,17 @@ class DBC():
         '''This is a single instance of DBC'''
         self.TRd_head = 0
         self.TRd_tail = self.TRd_head + DBC.TRd_size
-        self.bit_length = 512
+        self.bit_length = 511
         self.memory_size = 32
-        self.memory = [[0 for _ in range(self.bit_length)] for _ in range(self.memory_size * 2)]
+        self.padding_bits = self.memory_size / 2
+        self.memory = [[bin(0) for _ in range(self.memory_size * 2)]for _ in range(self.bit_length)]
 
-
-    def controller(self, memory, row_number, instruction, nanowire_num_start_pos = 0, nanowire_num_end_pos = 511, data_hex = None):
+    def controller(self, memory, write_port, instruction, nanowire_num_start_pos = 0, nanowire_num_end_pos = 511, data_hex = None):
+        nanowire_num_start_pos = int(nanowire_num_start_pos)
+        nanowire_num_end_pos = int(nanowire_num_end_pos)
         cycles = 0
         diff = 0
-
+        row_number = write_port + self.padding_bits
         if self.TRd_head > row_number:
             diff = self.TRd_head - row_number
             # Cycles for shift
@@ -45,10 +47,10 @@ class DBC():
             self.TRd_head = row_number
             self.TRd_tail = self.TRd_head + DBC.TRd_size
 
+        self.TRd_head = int(self.TRd_head)
 
-
-        # Initializing Local Buffer for all DBC's
-        Local_row_buffer = [0] * (512)
+        # Initializing single Local Buffer for all DBC's
+        Local_row_buffer = [0] * (self.bit_length)
 
         if data_hex != None:
             # Convert hex data to bin
@@ -56,6 +58,8 @@ class DBC():
             data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
             for i in range(0, len(data_bin)):
                 Local_row_buffer[i] = data_bin[i]
+
+
 
         # Write instruction
         if (instruction == 'W AP0 AP1'):
@@ -99,51 +103,58 @@ class DBC():
             cycles =+ cycle
 
         # Logical shift
-        elif (instruction == 'LS R AP0'):
-            for i in range(0,504):
-                Local_row_buffer[i] = self.memory[self.TRd_head][i+8]
+        elif (instruction == 'LS L AP0' or instruction == 'LS L AP1'):
+            local_buffer_count = 0
+            for i in range(nanowire_num_end_pos, self.bit_length):
+                Local_row_buffer[local_buffer_count] = self.memory[i][self.TRd_head]
+                local_buffer_count += 1
+            cycles = + 1
 
-        elif (instruction == 'LS R AP1'):
-            for i in range(0, 504):
-                Local_row_buffer[i] = self.memory[self.TRd_tail][i + 8]
-
-        elif (instruction == 'LS L AP0'):
-            for i in range(0, 504):
-                Local_row_buffer[i+8] = self.memory[self.TRd_head][i]
-
-        elif (instruction == 'LS L AP1'):
-            for i in range(0, 504):
-                Local_row_buffer[i+8] = self.memory[self.TRd_tail][i]
+        elif (instruction == 'LS R AP0' or instruction == 'LS R AP1'):
+            local_buffer_count = 0
+            for i in range(0, nanowire_num_end_pos):
+                Local_row_buffer[local_buffer_count] = self.memory[i][self.TRd_head]
+                local_buffer_count += 1
+            cycles = + 1
 
         # shift Instructions
         elif (instruction == 'SR'):
-            row_number += 1
+            self.TRd_head += 1
             cycles = + 1
 
         elif (instruction == 'SL'):
-            row_number -= 1
+            self.TRd_head -= 1
             cycles = + 1
 
         # Read instruction
-        elif (instruction == 'R AP0'):
-            Local_row_buffer[:] = memory[self.TRd_head][:]
+        elif (instruction == 'R AP0' or instruction == 'R AP1'):
+            for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
+                Local_row_buffer[i] = self.memory[i][self.TRd_head]
+
             cycles = + 1
 
-        elif (instruction == 'R AP1'):
-            Local_row_buffer[:] = memory[self.TRd_head][:]
-            cycles = + 1
 
-        elif (instruction == 'And'):
-            Local_row_buffer[:] = logicop.And(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+        # Counting carry bit's
+        elif (instruction == 'carry'):
+            Local_row_buffer[:] = logicop.carry(self.memory, self.TRd_head)
+
+        elif (instruction == 'carry prime'):
+            Local_row_buffer[:] = logicop.carry_prime(self.memory, self.TRd_head)
+
+
+
+        # elif (instruction == 'And'):
+        #     Local_row_buffer[:] = logicop.And(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
         # elif instruction == 'Nand':
         #     Local_row_buffer = logicop.Nand(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
         #
         #
-        # elif instruction == 'Xor':
-        #     Local_row_buffer = logicop.Xor(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
-        #
-        #
+        elif instruction == 'Xor':
+            cycle, Local_row_buffer = logicop.Xor(self.memory, row_number)
+
+
         # elif instruction == 'Xnor':
         #     Local_row_buffer = logicop.Xnor(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
         #
