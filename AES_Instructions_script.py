@@ -19,23 +19,25 @@ sheet = wb.sheet_by_index(0)
 # Extracting number of columns and rows
 ncol = sheet.ncols
 #nrow = sheet.nrows
-nrow = 4
+nrow = 25
 total_cycles = 0
 for i in range(1, nrow):
     # Reading Excel File with instruction/commands.
     DBC_number = sheet.cell_value(i, 1)
     row_number = sheet.cell_value(i, 2)
-    nanowire_num_start_pos = sheet.cell_value(i, 4)
-    nanowire_num_end_pos = sheet.cell_value(i, 6)
     operation = sheet.cell_value(i, 8)
+    if sheet.cell_value(i, 4) == '':
+        nanowire_num_start_pos = 0
+    else:
+        nanowire_num_start_pos = sheet.cell_value(i, 4)
+    if sheet.cell_value(i, 6) == '':
+        nanowire_num_end_pos = 511
+    else:
+        nanowire_num_end_pos = sheet.cell_value(i, 6)
     if sheet.cell_value(i, 9) == '':
         data_hex = None
     else:
         data_hex = sheet.cell_value(i, 9)
-
-
-
-
 
 
     # Calling DBC object for each instruction above

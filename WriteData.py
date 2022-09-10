@@ -1,6 +1,6 @@
 ''' This file write's data to DWM Memory depending on the write instrucion'''
 
-TRd_size = 4
+TRd_size = 5
 
 
 def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
@@ -9,11 +9,11 @@ def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, 
     nanowire_num_end_pos = int(nanowire_num_end_pos)
 
     # Shifting the data within the TRd space to right and writing at the TRd head
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
         for j in range(writeport + TRd_size - 1, writeport, -1):
             memory[i][j] = memory[i][j-1]
     local_buff_start = 0
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
         memory[i][writeport] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 

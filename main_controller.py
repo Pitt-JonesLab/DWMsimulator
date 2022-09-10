@@ -14,16 +14,17 @@ import LogicOperation as logicop
 
 
 class DBC():
-    TRd_size = 4
+    TRd_size = 5
 
     def __init__(self, ):
         '''This is a single instance of DBC'''
         self.TRd_head = 0
         self.TRd_tail = self.TRd_head + DBC.TRd_size
-        self.bit_length = 511
+        self.bit_length = 512
         self.memory_size = 32
         self.padding_bits = self.memory_size / 2
         self.memory = [[bin(0) for _ in range(self.memory_size * 2)]for _ in range(self.bit_length)]
+
 
     def controller(self, memory, write_port, instruction, nanowire_num_start_pos = 0, nanowire_num_end_pos = 511, data_hex = None):
         nanowire_num_start_pos = int(nanowire_num_start_pos)
@@ -103,12 +104,25 @@ class DBC():
             cycles =+ cycle
 
         # Logical shift
-        elif (instruction == 'LS L AP0' or instruction == 'LS L AP1'):
+
+        elif ('LS L AP0' in instruction or 'LS L AP1' in instruction):
+            command = (instruction.rsplit(' ', 1))
+            n = int(command[-1])
             local_buffer_count = 0
-            for i in range(nanowire_num_end_pos, self.bit_length):
+            for i in range(n, self.bit_length):
                 Local_row_buffer[local_buffer_count] = self.memory[i][self.TRd_head]
                 local_buffer_count += 1
             cycles = + 1
+
+        elif ('LS R AP0' in instruction or 'LS R AP1' in instruction):
+            command = (instruction.rsplit(' ', 1))
+            n = int(command[-1])
+            local_buffer_count = 0
+            for i in range(n, self.bit_length):
+                Local_row_buffer[local_buffer_count] = self.memory[i][self.TRd_head]
+                local_buffer_count += 1
+            cycles = + 1
+
 
         elif (instruction == 'LS R AP0' or instruction == 'LS R AP1'):
             local_buffer_count = 0
@@ -151,9 +165,9 @@ class DBC():
         #     Local_row_buffer = logicop.Nand(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)
         #
         #
-        elif instruction == 'Xor':
-            cycle, Local_row_buffer = logicop.Xor(self.memory, row_number)
-
+        elif instruction == 'xor':
+            cycle, Local_row_buffer = logicop.Xor(self.memory, self.TRd_head,nanowire_num_start_pos, nanowire_num_end_pos)
+            cycles = + cycle
 
         # elif instruction == 'Xnor':
         #     Local_row_buffer = logicop.Xnor(self.memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos)

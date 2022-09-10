@@ -1,5 +1,5 @@
 from functools import reduce
-
+TRd_size = 5
 # def And(memory, TRd_head, nanowire_num_start_pos, nanowire_num_end_pos):
 #     TRd_head = int(TRd_head)
 #     TRd_tail = TRd_head + 4
@@ -24,20 +24,30 @@ from functools import reduce
 #     res = not (Andresult)  # complementing the and result
 #
 #     return res
-#
-#
-def Xor(memory, row_number):
-    TRd_start_loc = int(row_number)
-    TRd_size = 4
-    TRd_end_loc = int(TRd_start_loc) + TRd_size
 
-    mem = memory[TRd_start_loc:TRd_end_loc+1]
-    print(mem)
+def Xor(memory, row_number, nanowire_num_start_pos,nanowire_num_end_pos):
+    TRd_head = int(row_number)
+    TRd_end_loc = TRd_head + TRd_size
+    mem = []
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
+        count = 0
+        for j in range(TRd_head, TRd_end_loc):
+            if memory[i][j] == bin(1):
+                count += 1
+
+        if (count % 2 == 0):
+            val = bin(0)
+        else:
+            val = bin(1)
+        mem.append(val)
+
+    return 1, mem
+
+
     # Bitwise XOR of List
     # Using reduce() + lambda + "&" operator
+    # for i in range()
     # res = reduce(lambda x, y: x ^ y, mem)
-    # print (TRd_start_loc)
-    # print(TRd_end_loc)
     # res = ''
     # if TRd == 4:
     #     for m in zip(mem[0], mem[1], mem[2], mem[3]):
