@@ -32,15 +32,29 @@ def Xor(memory, row_number, nanowire_num_start_pos,nanowire_num_end_pos):
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
         count = 0
         for j in range(TRd_head, TRd_end_loc):
-            if memory[i][j] == bin(1):
+            if memory[i][j] == '1':
                 count += 1
 
         if (count % 2 == 0):
-            val = bin(0)
+
+            val = 0
         else:
-            val = bin(1)
+            val = 1
         mem.append(val)
 
+    hex_num = []
+    # Converting binary data at TRd head to Hex for verification/visualization
+    count = 0
+    s = ''
+    for i in range(0, len(mem)):
+        s += str(mem[i])
+        count += 1
+        if count == 4:
+            num = int(s, 2)
+            hex_num.append(hex(num))
+            s = ''
+            count = 0
+    print('Data after XOR ', hex_num)
     return 1, mem
 
 
