@@ -20,18 +20,22 @@ def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, 
         local_buff_start += 1
 
     hex_num = []
+
     # Converting binary data at TRd head to Hex for verification/visualization
     count = 0
     s = ''
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-        s += (str(memory[i][writeport]))
-        count += 1
-        if count == 4:
-            num = int(s, 2)
-            hex_num.append(hex(num))
-            s = ''
-            count = 0
-    print('Data after memory transverse write at TRd head', hex_num)
+    for TRdlen in range(writeport, writeport + TRd_size):
+        for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+            s += (str(memory[i][TRdlen]))
+            count += 1
+            if count == 4:
+                num = int(s, 2)
+                hex_num.append(hex(num))
+                s = ''
+                count = 0
+        print('Data after memory transverse write AP0 at TRd pos {} is {}'.format(TRdlen, hex_num))
+        hex_num.clear()
+
     return 1
 
 def writeone(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
@@ -48,6 +52,22 @@ def writeone(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, L
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
         memory[i][writeport] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
+
+    hex_num = []
+    # Converting binary data at TRd head to Hex for verification/visualization
+    count = 0
+    s = ''
+    for TRdlen in range(writeport, writeport + TRd_size):
+        for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+            s += (str(memory[i][TRdlen]))
+            count += 1
+            if count == 4:
+                num = int(s, 2)
+                hex_num.append(hex(num))
+                s = ''
+                count = 0
+        print('Data after memory transverse write AP1 at TRd pos {} is {}'.format(TRdlen, hex_num))
+        hex_num.clear()
 
     return 1
 
