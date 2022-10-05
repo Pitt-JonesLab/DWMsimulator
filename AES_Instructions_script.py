@@ -11,7 +11,7 @@ from main_controller import DBC
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of Excel
-loc = ("/Users/paviabera/Desktop/DWM Simulator/Stephen/instruction set for AES operation-Stephen.xlsx")
+loc = ("/Users/paviabera/Desktop/instruction set for AES operation_1.1.xlsx")
 # loc = ("/Users/paviabera/Desktop/DWM Simulator/instruction set for AES operation.xlsx")
 
 wb = xlrd.open_workbook(loc)

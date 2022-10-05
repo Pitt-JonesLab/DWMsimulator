@@ -27,19 +27,43 @@ TRd_size = 5
 
 def Xor(memory, row_number, nanowire_num_start_pos,nanowire_num_end_pos):
     TRd_head = int(row_number)
-    TRd_end_loc = TRd_head + TRd_size
+    TRd_end_loc = TRd_head + TRd_size - 1
+    print('TRd_head',TRd_head)
+    print('TRd_end_loc', TRd_end_loc)
+
+    # Converting binary data at TRd head to Hex for verification/visualization
+    hex_num = []
+    count = 0
+    s = ''
+    for TRdlen in range(TRd_head, TRd_end_loc + 1):
+        for i in range(0, 511 + 1):
+            s += (str(memory[i][TRdlen]))
+            count += 1
+            if count == 4:
+                num = int(s, 2)
+                hex_num.append(hex(num))
+                s = ''
+                count = 0
+        print('Data before XOR at pos {} is {}'.format(TRdlen, hex_num))
+        hex_num.clear()
+
+
+
+
+
+
     mem = []
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
+    for i in range(0, 511+1):
         count = 0
-        for j in range(TRd_head, TRd_end_loc):
+        for j in range(TRd_head, TRd_end_loc + 1):
             if memory[i][j] == '1':
+                # print(memory[i][j])
                 count += 1
 
         if (count % 2 == 0):
-
-            val = 0
+            val = '0'
         else:
-            val = 1
+            val = '1'
         mem.append(val)
 
     hex_num = []
@@ -54,7 +78,7 @@ def Xor(memory, row_number, nanowire_num_start_pos,nanowire_num_end_pos):
             hex_num.append(hex(num))
             s = ''
             count = 0
-    print('Data after XOR ', hex_num)
+    print('XOR ', hex_num)
     return 1, mem
 
 
