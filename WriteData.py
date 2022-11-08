@@ -20,24 +20,42 @@ def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, 
         memory[i][writeport] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
-    hex_num = []
+    # hex_num = ''
+    # # Converting binary data at TRd head to Hex for verification/visualization
+    # count = 0
+    # s = ''
+    #
+    # # for j in range(writeport, writeport + TRd_size):
+    # for i in range(0, 512):
+    #     s += (str(memory[i][writeport]))
+    #     count += 1
+    #     if count == 4:
+    #         num = int(s, 2)
+    #         # print(hex(num))
+    #         string_hex_num = format(num, 'x')
+    #         hex_num += (string_hex_num)
+    #         s = ''
+    #         count = 0
+    # print('W AP0 at TRd pos {} is {}'.format(writeport - 16, hex_num))
 
+    hex_num = ''
     # Converting binary data at TRd head to Hex for verification/visualization
     count = 0
     s = ''
-    for TRdlen in range(writeport , writeport + TRd_size):
+    for TRdlen in range( writeport, writeport + TRd_size):
         for i in range(0, 511 + 1):
             s += (str(memory[i][TRdlen]))
             count += 1
             if count == 4:
                 num = int(s, 2)
-                hex_num.append(hex(num))
+                string_hex_num = format(num, 'x')
+                hex_num += (string_hex_num)
                 s = ''
                 count = 0
-        print('Data after memory transverse write AP0 at TRd pos {} is {}'.format(TRdlen, hex_num))
-        hex_num.clear()
+        print("For 'W AP0 AP1' pos at {} data is {}".format(TRdlen - 16, hex_num))
+        hex_num = ''
 
-    return 1
+    return 1, 0.504676821
 
 def writeone(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     writeport = int(row_number) + TRd_size - 1
@@ -71,7 +89,7 @@ def writeone(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, L
         print('Data after memory transverse write AP1 at TRd pos {} is {}'.format(TRdlen, hex_num))
         hex_num.clear()
 
-    return 1
+    return 1, 0.504676821
 
 def overwrite_zero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     writeport = int(row_number)
@@ -97,24 +115,26 @@ def overwrite_zero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_
     #         s = ''
     #         count = 0
     # print('Data after memory overwrite at TRd head at writeport {} is {}'.format(writeport, hex_num))
-    hex_num = []
+    hex_num = ''
     # Converting binary data at TRd head to Hex for verification/visualization
     count = 0
     s = ''
 
-    for j in range(writeport, writeport + TRd_size):
-        for i in range(0, 512):
-            s += (str(memory[i][j]))
-            count += 1
-            if count == 4:
-                num = int(s, 2)
-                hex_num.append(hex(num))
-                s = ''
-                count = 0
-        print('Data after memory overwrite at TRd head at TRd pos {} is {}'.format(j, hex_num))
-        hex_num.clear()
+    # for j in range(writeport, writeport + TRd_size):
+    for i in range(0, 512):
+        s += (str(memory[i][writeport]))
+        count += 1
+        if count == 4:
+            num = int(s, 2)
+            # print(hex(num))
+            string_hex_num = format(num, 'x')
+            hex_num+=(string_hex_num)
+            s = ''
+            count = 0
+    print('W AP0 at TRd pos {} is {}'.format(writeport - 16 , hex_num))
+    hex_num = ''
 
-    return 1
+    return 1, 0.1
 
 def overwrite_one(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     writeport = int(row_number)
@@ -156,9 +176,8 @@ def overwrite_one(memory, row_number, nanowire_num_start_pos, nanowire_num_end_p
         print('Data after memory overwrite at TRd tail at TRd pos {} is {}'.format(TRdlen, hex_num))
         hex_num.clear()
 
-    return 1
+    return 1, 0.1
 
-    return 1
 
 # def shift_writezero(memory, data_in_binary):
 #     # write at (right) TRd end and shift data towards right padding.
@@ -194,7 +213,7 @@ def writezero_shiftLE(memory, row_number, nanowire_num_start_pos, nanowire_num_e
         memory[i][nanowire_num_start_pos:nanowire_num_end_pos] = memory[i + 1][nanowire_num_start_pos:nanowire_num_end_pos]
     memory[writeport][nanowire_num_start_pos:nanowire_num_end_pos] = Local_row_buffer[nanowire_num_start_pos:nanowire_num_end_pos]
 
-    return 1
+    return 1, 0.504676821
 
 
 def writezero_shiftRE(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
@@ -209,7 +228,7 @@ def writezero_shiftRE(memory, row_number, nanowire_num_start_pos, nanowire_num_e
         memory[i][nanowire_num_start_pos:nanowire_num_end_pos] = memory[i - 1][nanowire_num_start_pos:nanowire_num_end_pos]
     memory[writeport][nanowire_num_start_pos:nanowire_num_end_pos] = Local_row_buffer[nanowire_num_start_pos:nanowire_num_end_pos]
 
-    return 1
+    return 1, 0.504676821
 
 def writeone_shiftLE(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     #write at (right) TRd end and shift data towards left padding.
@@ -223,7 +242,7 @@ def writeone_shiftLE(memory, row_number, nanowire_num_start_pos, nanowire_num_en
         memory[i][nanowire_num_start_pos:nanowire_num_end_pos] = memory[i + 1][nanowire_num_start_pos:nanowire_num_end_pos]
     memory[writeport][nanowire_num_start_pos:nanowire_num_end_pos] = Local_row_buffer[nanowire_num_start_pos:nanowire_num_end_pos]
 
-    return 1
+    return 1, 0.504676821
 
 def writeone_shiftRE(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     #write at (right) TRd end and shift data towards right padding.
@@ -237,5 +256,5 @@ def writeone_shiftRE(memory, row_number, nanowire_num_start_pos, nanowire_num_en
         memory[i][nanowire_num_start_pos:nanowire_num_end_pos] = memory[i - 1][nanowire_num_start_pos:nanowire_num_end_pos]
     memory[writeport][nanowire_num_start_pos:nanowire_num_end_pos] = Local_row_buffer[nanowire_num_start_pos:nanowire_num_end_pos]
 
-    return 1
+    return 1, 0.504676821
 
