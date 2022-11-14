@@ -1,7 +1,8 @@
 ''' This file write's data to DWM Memory depending on the write instrucion'''
+from display import display
 
 TRd_size = 5
-import numpy as np
+
 def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     writeport = int(row_number)
     nanowire_num_start_pos = int(nanowire_num_start_pos)
@@ -58,6 +59,7 @@ def writeone(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, L
     return 1, 0.504676821
 
 def overwrite_zero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
+    # print(row_number)
     writeport = int(row_number)
     nanowire_num_start_pos = int(nanowire_num_start_pos)
     nanowire_num_end_pos = int(nanowire_num_end_pos)
@@ -82,12 +84,22 @@ def overwrite_zero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_
             s = ''
             count = 0
 
-    print("Write AP1 =  ", hex_num)
+    # print("Write AP0 =  ", hex_num)
+    arr = np.zeros([8, 32], dtype=object)
+    hex_num = (hex_num[2:31])
+    x = int((row_number - 16)/4 - 1)
+    for i in range(0, len(hex_num)):
+        arr[0][i] = hex_num[i]
+
+        # arr =  np.array[hex_num]
+
+    print(arr)
 
 
     return 1, 0.1
 
 def overwrite_one(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
+    # print(row_number)
     writeport = int(row_number)
     nanowire_num_start_pos = int(nanowire_num_start_pos)
     nanowire_num_end_pos = int(nanowire_num_end_pos)
@@ -95,52 +107,10 @@ def overwrite_one(memory, row_number, nanowire_num_start_pos, nanowire_num_end_p
     # Overwriting at the TRd head or tail
     local_buff_start = nanowire_num_start_pos
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
-        memory[i][writeport] = Local_row_buffer[local_buff_start]
+        memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
-    #Converting binary data at TRd head to Hex for verification/visualization
-    count = 0
-    s = ''
-    hex_num = '0x'
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-        s += str( memory[i][writeport])
-        count += 1
-        if count == 4:
-            num = int(s, 2)
-            string_hex_num = format(num,'x')
-            hex_num += (string_hex_num)
-            s = ''
-            count = 0
-
-    print("Write AP1 =  ", hex_num)
-    arr = np.zeros([8,32])
-    hex_num=str(hex_num[2:])
-    for i in range(0,len(hex_num)):
-        arr[3][i] = hex_num[i]
-
-
-            # arr =  np.array[hex_num]
-
-    print(arr)
-
-
-
-
-
-
-
-    # # Converting bin to hex
-    # n = ''
-    # for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-    #     n = n + str(memory[i][writeport])
-    #
-    # # convert binary to int
-    # print(Local_row_buffer)
-    # print(n)
-    # num = int(n, 2)
-    # # convert int to hexadecimal
-    # hex_num = format(num,'x')
-    # print('Write AP1 =  ', (hex_num))
+    display(memory,row_number)
 
     return 1, 0.1
 

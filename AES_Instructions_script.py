@@ -87,12 +87,15 @@ lines = instruction_file.readlines()
 for line in lines:
     instruction_line = []
     for word in line.split():
+        if word == '#':
+            continue
         instruction_line.append(word)
     print('instruction:', instruction_line)
     address_destination = instruction_line[1]
     address_destination = (address_destination.split("$", 1))
     address_destination = int(address_destination[1])
     DBC_number_destinantion, row_number_destination = get_adress(address_destination)
+
 
     if '$' in instruction_line[2]:
         address_source = instruction_line[2]

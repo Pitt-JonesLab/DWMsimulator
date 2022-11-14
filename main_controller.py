@@ -7,7 +7,7 @@ Shift-based scheme utilizes a multi-nanowire approach to ensure that reads and w
 can be more effectively aligned with access ports for simultaneous access in the same cycle.
 
 '''
-
+import numpy as np
 # Importing all
 import WriteData as adt
 import LogicOperation as logicop
@@ -25,7 +25,12 @@ class DBC():
         self.padding_bits = int(self.memory_size / 2)
         self.TRd_head = int(0 + self.padding_bits)
         self.TRd_tail = int(self.TRd_head + DBC.TRd_size - 1)
-        self.memory = [[('0') for _ in range(self.memory_size * 2)]for _ in range(self.bit_length)]
+        # self.memory = [[('0') for _ in range(self.memory_size * 2)]for _ in range(self.bit_length)]
+
+        self.memory = [[('0') for _ in range(self.bit_length)] for _ in range(self.memory_size * 2)]
+
+
+
 
 
 
@@ -38,6 +43,7 @@ class DBC():
         diff = 0
         row_number = int(write_port + self.padding_bits)
         print('prev head, prev tail, row no:',self.TRd_head- self.padding_bits ,self.TRd_tail- self.padding_bits,write_port)
+
 
         if abs(self.TRd_head - row_number) < abs(self.TRd_tail - row_number):
             #Move TRd_head
@@ -66,10 +72,10 @@ class DBC():
                 instruction = 'R AP0'
             elif 'SHL' in instruction:
                 v = instruction.rsplit(' ', 1)
-                instruction = 'LS L AP0'+ ' '+ str(v[-1])
+                instruction = 'LS L AP0' + ' ' + str(v[-1])
             elif 'SHR' in instruction:
                 v = instruction.rsplit(' ', 1)
-                instruction = 'LS R AP0'+ ' '+ str(v[-1])
+                instruction = 'LS R AP0' + ' ' + str(v[-1])
 
         elif abs(self.TRd_head - row_number) > abs(self.TRd_tail - row_number):
             #Move TRd_tail
@@ -113,6 +119,7 @@ class DBC():
 
             for i in range(0, len(data_bin)):
                 DBC.Local_row_buffer[i] = (data_bin[i])
+
 
 
         # # Write instruction
@@ -254,7 +261,10 @@ class DBC():
             num = int(n, 2)
             # convert int to hexadecimal
             hex_num = hex(num)
-            print('Read AP0 =  ', hex_num)
+            n = []
+            for i in range(2, len(hex_num)):
+                n.append(hex_num[i])
+            print('Read AP0 =  ', n)
 
             return cycles, energies, hex_num
 
@@ -271,7 +281,12 @@ class DBC():
             num = int(n, 2)
             # convert int to hexadecimal
             hex_num = hex(num)
-            print('Read AP1=  ', hex_num)
+
+            n = []
+            for i in range (2, len(hex_num)):
+                n.append(hex_num[i])
+
+            print('Read AP1=  ', n)
 
             return cycles, energies, hex_num
 
