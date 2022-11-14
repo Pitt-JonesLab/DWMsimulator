@@ -67,33 +67,34 @@ def overwrite_zero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_
     # Overwriting at the TRd head or tail
     local_buff_start = nanowire_num_start_pos
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-        memory[i][writeport] = Local_row_buffer[local_buff_start]
+        memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
-    # Converting bin to hex
-    count = 0
-    s = ''
-    hex_num = '0x'
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-        s += str(memory[i][writeport])
-        count += 1
-        if count == 4:
-            num = int(s, 2)
-            string_hex_num = format(num, 'x')
-            hex_num += (string_hex_num)
-            s = ''
-            count = 0
-
-    # print("Write AP0 =  ", hex_num)
-    arr = np.zeros([8, 32], dtype=object)
-    hex_num = (hex_num[2:31])
-    x = int((row_number - 16)/4 - 1)
-    for i in range(0, len(hex_num)):
-        arr[0][i] = hex_num[i]
-
-        # arr =  np.array[hex_num]
-
-    print(arr)
+    display(memory, row_number)
+    # # Converting bin to hex
+    # count = 0
+    # s = ''
+    # hex_num = '0x'
+    # for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+    #     s += str(memory[i][writeport])
+    #     count += 1
+    #     if count == 4:
+    #         num = int(s, 2)
+    #         string_hex_num = format(num, 'x')
+    #         hex_num += (string_hex_num)
+    #         s = ''
+    #         count = 0
+    #
+    # # print("Write AP0 =  ", hex_num)
+    # arr = np.zeros([8, 32], dtype=object)
+    # hex_num = (hex_num[2:31])
+    # x = int((row_number - 16)/4 - 1)
+    # for i in range(0, len(hex_num)):
+    #     arr[0][i] = hex_num[i]
+    #
+    #     # arr =  np.array[hex_num]
+    #
+    # print(arr)
 
 
     return 1, 0.1

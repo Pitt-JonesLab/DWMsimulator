@@ -42,7 +42,7 @@ class DBC():
         cycles = 0
         diff = 0
         row_number = int(write_port + self.padding_bits)
-        print('prev head, prev tail, row no:',self.TRd_head- self.padding_bits ,self.TRd_tail- self.padding_bits,write_port)
+        # print('prev head, prev tail, row no:',self.TRd_head- self.padding_bits ,self.TRd_tail- self.padding_bits,write_port)
 
 
         if abs(self.TRd_head - row_number) < abs(self.TRd_tail - row_number):
@@ -70,12 +70,12 @@ class DBC():
                 instruction = 'W AP0'
             elif instruction == 'Read':
                 instruction = 'R AP0'
-            elif 'SHL' in instruction:
-                v = instruction.rsplit(' ', 1)
-                instruction = 'LS L AP0' + ' ' + str(v[-1])
-            elif 'SHR' in instruction:
-                v = instruction.rsplit(' ', 1)
-                instruction = 'LS R AP0' + ' ' + str(v[-1])
+            # elif 'SHL' in instruction:
+            #     v = instruction.rsplit(' ', 1)
+            #     instruction = 'LS L AP0' + ' ' + str(v[-1])
+            # elif 'SHR' in instruction:
+            #     v = instruction.rsplit(' ', 1)
+            #     instruction = 'LS R AP0' + ' ' + str(v[-1])
 
         elif abs(self.TRd_head - row_number) > abs(self.TRd_tail - row_number):
             #Move TRd_tail
@@ -102,12 +102,12 @@ class DBC():
                 instruction = 'W AP1'
             elif instruction == 'Read':
                 instruction = 'R AP1'
-            elif 'SHL' in instruction:
-                v = instruction.rsplit(' ', 1)
-                instruction = 'LS L AP1'+ ' '+ str(v[-1])
-            elif 'SHR' in instruction:
-                v = instruction.rsplit(' ', 1)
-                instruction = 'LS R AP1'+ ' '+ str(v[-1])
+            # elif 'SHL' in instruction:
+            #     v = instruction.rsplit(' ', 1)
+            #     instruction = 'LS L AP1'+ ' '+ str(v[-1])
+            # elif 'SHR' in instruction:
+            #     v = instruction.rsplit(' ', 1)
+            #     instruction = 'LS R AP1'+ ' '+ str(v[-1])
 
 
 
@@ -177,9 +177,10 @@ class DBC():
 
 
         #Logical shift
-        elif ('LS L AP0' in instruction or 'LS L AP1' in instruction):
+        elif ('SHL' in instruction):
             command = (instruction.rsplit(' ', 1))
             n = int(command[-1])
+            print(n)
             local_buffer_count = 0
             for i in range(n, self.bit_length):
                 DBC.Local_row_buffer[local_buffer_count] = self.memory[i][self.TRd_head]
@@ -209,7 +210,7 @@ class DBC():
 
 
 
-        elif ('LS R AP0' in instruction or 'LS R AP1' in instruction):
+        elif ('SHR' in instruction):
             command = (instruction.rsplit(' ', 1))
             n = int(command[-1])
             local_buffer_count = n
@@ -250,43 +251,79 @@ class DBC():
         # Read instruction
         elif (instruction == 'R AP0' ):
             for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
-                DBC.Local_row_buffer[i] = self.memory[i][self.TRd_head]
+                DBC.Local_row_buffer[i] = self.memory[self.TRd_head][i]
 
             cycles = + 1
             energies = + 1
-            # Converting bin to hex
-            n = DBC.Local_row_buffer[:]
-            n = "".join([str(item) for item in n])
-            # convert binary to int
-            num = int(n, 2)
-            # convert int to hexadecimal
-            hex_num = hex(num)
-            n = []
-            for i in range(2, len(hex_num)):
-                n.append(hex_num[i])
-            print('Read AP0 =  ', n)
+            # # Converting bin to hex
+            # n = DBC.Local_row_buffer[:]
+            # n = "".join([str(item) for item in n])
+            # # convert binary to int
+            # num = int(n, 2)
+            # # convert int to hexadecimal
+            # hex_num = hex(num)
+            # n = []
+            # for i in range(2, len(hex_num)):
+            #     n.append(hex_num[i])
+            # print('Read AP0 =  ', n)
+
+            # converting to Hex
+            count = 0
+            s = ''
+            hex_num = '0x'
+
+            for j in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+                s += str(self.memory[self.TRd_tail][j])
+                count += 1
+                if count == 4:
+                    num = int(s, 2)
+                    string_hex_num = format(num, 'x')
+                    hex_num += (string_hex_num)
+
+                    s = ''
+                    count = 0
+
+            print('Read AP0=  ', (hex_num))
 
             return cycles, energies, hex_num
 
         elif (instruction == 'R AP1'):
             for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-                DBC.Local_row_buffer[i] = self.memory[i][self.TRd_tail]
+                DBC.Local_row_buffer[i] = self.memory[self.TRd_tail][i]
 
             cycles = + 1
             energies = + 1
 
-            n = DBC.Local_row_buffer[:]
-            n = "".join([str(item) for item in n])
-            # convert binary to int
-            num = int(n, 2)
-            # convert int to hexadecimal
-            hex_num = hex(num)
 
-            n = []
-            for i in range (2, len(hex_num)):
-                n.append(hex_num[i])
 
-            print('Read AP1=  ', n)
+            # n = DBC.Local_row_buffer[:]
+            # n = "".join([str(item) for item in n])
+            # # convert binary to int
+            # num = int(n, 2)
+            # # convert int to hexadecimal
+            # hex_num = hex(num)
+            #
+            # n = []
+            # for i in range (2, len(hex_num)):
+            #     n += (hex_num[i])
+
+            # converting to Hex
+            count = 0
+            s = ''
+            hex_num = '0x'
+
+            for j in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+                s += str(self.memory[self.TRd_tail][j])
+                count += 1
+                if count == 4:
+                    num = int(s, 2)
+                    string_hex_num = format(num, 'x')
+                    hex_num += (string_hex_num)
+
+                    s = ''
+                    count = 0
+
+            print('Read AP1=  ', (hex_num))
 
             return cycles, energies, hex_num
 
