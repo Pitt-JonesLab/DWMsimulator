@@ -27,7 +27,7 @@ def display(memory,row_number):
                 count = 0
 
         # Add to table
-        t = [i, hex_num]
+        t = [i-16, hex_num]
         table.append(t)
 
     print(tabulate(table, headers='firstrow', tablefmt='fancy_grid'))

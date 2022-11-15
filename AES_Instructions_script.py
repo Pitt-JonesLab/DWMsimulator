@@ -60,25 +60,28 @@ def get_adress(address):
 
 
 def call_DBC(dbc, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, d):
-    if operation == 'Read' or 'SHL' in  operation or 'SHR' in operation:
+
+    if operation == 'overwrite':
+        cycles, energy = dbc.controller(row_number, operation, nanowire_num_start_pos,nanowire_num_end_pos, d)
+        return cycles, energy
+    else:
         # Calling DBC object for each instruction above
         cycles, energy, data = dbc.controller(row_number, operation,nanowire_num_start_pos,nanowire_num_end_pos, d)
         return cycles, energy, data
-    else:
-        cycles, energy = dbc.controller(row_number, operation, nanowire_num_start_pos,nanowire_num_end_pos, d)
-        return cycles, energy
 
-def write_type(type):
 
-    if type == 0:
+def write_type(dbcs, row_number_destination, write_type, nanowire_num_start_pos, nanowire_num_end_pos, data_hex):
+
+    write_type = int(write_type)
+    if write_type == 0:
         # Type 0: Write back normally
         # Call Write
-        cycles, energy = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, 'overwrite',  nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
-    elif type >= 1 and  type <= 6:
+        cycles, energy = call_DBC(dbcs, row_number_destination, 'overwrite',  nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+    elif write_type >= 1 and  write_type <= 6:
         # Type 1: Transverse writes
-        cycles, energy = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, type, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        cycles, energy = call_DBC(dbcs, row_number_destination, write_type, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
 
-    elif type == 7:
+    elif write_type == 7:
         raise Exception("Sorry, no operation for seven")
 
 
@@ -110,9 +113,10 @@ for line in lines:
     address_destination = (address_destination.split("$", 1))
     address_destination = int(address_destination[1])
     DBC_number_destinantion, row_number_destination = get_adress(address_destination)
-    print('Destinantion DBC No:',DBC_number_destinantion)
-    print('Destinantion Row No with padding:', row_number_destination+16)
+    print('Destinantion DBC No:', DBC_number_destinantion)
+    print('Destinantion Row No:', row_number_destination)
 
+    logic_instruction = 'AND OR NOT NAND XOR XNOR NOR ADD MULT'
     if '$' in instruction_line[2]:
         address_source = instruction_line[2]
         address_source = (address_source.split("$", 1))
@@ -120,8 +124,8 @@ for line in lines:
         address_source = int(address_source)
         DBC_number_source, row_number_source = get_adress(address_source)
         print('Source DBC No:', DBC_number_source)
-        print('Source Row No with padding:', row_number_source + 16)
-        #Calling read function
+        print('Source Row No:', row_number_source)
+        #Calling read functionx
         cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
         data_hex = data[2:]
         nanowire_num_start_pos = 0
@@ -157,14 +161,17 @@ for line in lines:
         elif instruction_line[3] == 'SHL' or instruction_line[3] == 'SHR':
             instruction = instruction_line[3] + ' ' + instruction_line[4]
             # call operations
-            cycles, energy, data = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, instruction, nanowire_num_start_pos,nanowire_num_end_pos,  data_hex)
+            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, nanowire_num_start_pos,nanowire_num_end_pos,  data_hex)
             data_hex = data[2:]
             total_cycles += cycles
             total_energy += energy
 
+            cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+            total_cycles += cycles
+            total_energy += energy
         else:
             # call operations
-            cycles, energy, data = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, instruction, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+            cycles, energy, data = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[3], nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
             data_hex = data[2:]
             total_cycles += cycles
             total_energy += energy
