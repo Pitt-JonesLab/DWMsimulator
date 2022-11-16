@@ -8,26 +8,20 @@ def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, 
     nanowire_num_start_pos = int(nanowire_num_start_pos)
     nanowire_num_end_pos = int(nanowire_num_end_pos)
 
-
+    print(writeport + TRd_size - 1)
     # Shifting the data within the TRd space to right and writing at the TRd head
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
-        for j in range(writeport + TRd_size - 1, writeport, -1):
-            memory[i][j] = memory[i][j-1]
+    for i in range(writeport + TRd_size - 1, writeport, -1):
+        for j in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
+
+            memory[i][j] = memory[i-1][j]
 
     local_buff_start = nanowire_num_start_pos
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
 
-        memory[i][writeport] = Local_row_buffer[local_buff_start]
+        memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
-    # Converting bin to hex
-    n = memory[:][writeport]
-    n = "".join([str(item) for item in n])
-    # convert binary to int
-    num = int(n, 2)
-    # convert int to hexadecimal
-    hex_num = hex(num)
-    print('TW AP0 =  ', (hex_num))
+    display(memory, row_number, 'AP0')
 
     return 1, 0.504676821
 
@@ -38,23 +32,16 @@ def writeone(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, L
 
 
     # Shifting the data within the TRd space to left and writing at the TRd tail
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-        for j in range(writeport - TRd_size + 1, writeport):
+    for i in range(writeport - TRd_size + 1, writeport):
+        for j in range(nanowire_num_start_pos, nanowire_num_end_pos ):
             memory[i][j] = memory[i][j+1]
 
     local_buff_start = nanowire_num_start_pos
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-        memory[i][writeport] = Local_row_buffer[local_buff_start]
+        memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
-    # Converting bin to hex
-    n = memory[:][writeport]
-    n = "".join([str(item) for item in n])
-    # convert binary to int
-    num = int(n, 2)
-    # convert int to hexadecimal
-    hex_num = hex(num)
-    print('TW AP1 =  ', (hex_num))
+    display(memory, row_number, 'AP1')
 
     return 1, 0.504676821
 
@@ -70,31 +57,8 @@ def overwrite_zero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_
         memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
-    display(memory, row_number)
-    # # Converting bin to hex
-    # count = 0
-    # s = ''
-    # hex_num = '0x'
-    # for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-    #     s += str(memory[i][writeport])
-    #     count += 1
-    #     if count == 4:
-    #         num = int(s, 2)
-    #         string_hex_num = format(num, 'x')
-    #         hex_num += (string_hex_num)
-    #         s = ''
-    #         count = 0
-    #
-    # # print("Write AP0 =  ", hex_num)
-    # arr = np.zeros([8, 32], dtype=object)
-    # hex_num = (hex_num[2:31])
-    # x = int((row_number - 16)/4 - 1)
-    # for i in range(0, len(hex_num)):
-    #     arr[0][i] = hex_num[i]
-    #
-    #     # arr =  np.array[hex_num]
-    #
-    # print(arr)
+    s = 'AP0'
+    display(memory, row_number, s)
 
 
     return 1, 0.1
@@ -111,7 +75,7 @@ def overwrite_one(memory, row_number, nanowire_num_start_pos, nanowire_num_end_p
         memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
-    display(memory,row_number)
+    display(memory, row_number, 'AP1')
 
     return 1, 0.1
 

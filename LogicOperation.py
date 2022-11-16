@@ -1,13 +1,16 @@
-from functools import reduce
+
 TRd_size = 5
+
 def And(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
     TRd_head = int(row_number)
     TRd_end_loc = TRd_head + TRd_size - 1
 
-    mem = []
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-        count = 0
-        for j in range(TRd_head, TRd_end_loc + 1):
+    result = ''
+    for j in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+        for i in range(TRd_head, TRd_end_loc + 1):
+            count = 0
+
+            # print(i,j,memory[i][j])
             if memory[i][j] == '1':
                 count += 1
 
@@ -15,23 +18,23 @@ def And(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
             val = '1'
         else:
             val = '0'
-        mem.append(val)
+        result += val
 
     # Converting binary data at TRd head to Hex for verification/visualization
     count = 0
     s = ''
-    hex_num = []
-    for i in range(0, len(mem)):
-        s += str(mem[i])
+    hex_num = '0x'
+    for i in range(0, len(result)):
+        s += str(result[i])
         count += 1
         if count == 4:
             num = int(s, 2)
-            hex_num.append(hex(num))
+            string_hex_num = format(num, 'x')
+            hex_num += (string_hex_num)
             s = ''
             count = 0
-    print('AND ', hex_num)
 
-    return 1, 0.000958797, mem
+    return 1, 0.000958797, hex_num
 
 
 def Nand(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):

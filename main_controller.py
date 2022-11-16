@@ -40,9 +40,9 @@ class DBC():
 
         energies = 0
         cycles = 0
-        diff = 0
+
         row_number = int(write_port + self.padding_bits)
-        print('prev head, prev tail, row no:',self.TRd_head- self.padding_bits ,self.TRd_tail- self.padding_bits,write_port)
+        print('prev head, prev tail, row no:', self.TRd_head - self.padding_bits, self.TRd_tail - self.padding_bits, write_port)
 
 
         if abs(self.TRd_head - row_number) < abs(self.TRd_tail - row_number):
@@ -68,10 +68,13 @@ class DBC():
             # Call read or write at AP0
             if instruction == 'overwrite':
                 instruction = 'W AP0'
+            elif type(instruction) == int:
+                instruction = str(instruction)
             elif instruction == 'Read':
                 instruction = 'R AP0'
-            elif 'SHL' or 'SHR' in instruction:
+            elif 'SHL' in instruction or 'SHR' in instruction:
                 instruction = instruction + ' ' +'AP0'
+
 
 
         elif abs(self.TRd_head - row_number) > abs(self.TRd_tail - row_number):
@@ -117,18 +120,25 @@ class DBC():
             elif 'SHL' or 'SHR' in instruction:
                 instruction = instruction + ' '+'AP0'
 
+
         if data_hex != None:
             # Convert hex data to bin
             data_hex_size = len(data_hex) * 4
             data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
-
+            data_bin = list(data_bin)
+            # print('databin',data_hex)
 
             for i in range(0, len(data_bin)):
-                DBC.Local_row_buffer[i] = (data_bin[i])
+                # print((data_bin[i]))
+                DBC.Local_row_buffer[i] = data_bin[i]
+
+            # for idx, item in enumerate(data_bin):
+            #     DBC.Local_row_buffer[idx] = item
+            # print(DBC.Local_row_buffer)
 
 
         # # Write instruction
-        if (instruction == 1):
+        if (instruction == '1'):
 
             # write at (left) TRd start loc and shift data right within the TRd space
             cycle, energy = adt.writezero(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
@@ -136,7 +146,7 @@ class DBC():
             energies = + energy
             return cycles, energies
 
-        elif (instruction == 2):
+        elif (instruction == '2'):
             # write at (right) TRd end loc and shift data left within the TRd space.
             cycle, energy = adt.writeone(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             cycles = + cycle
@@ -155,25 +165,25 @@ class DBC():
             cycles = + cycle
             energies = + energy
             return cycles, energies
-        elif (instruction == 3):
+        elif (instruction == '3'):
             # write at (left) TRd start and shift data towards the left padding.
             cycle,energy = adt.writezero_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             cycles = + cycle
             energies = + energy
             return cycles, energies
-        elif (instruction == 4):
+        elif (instruction == '4'):
             # write at (left) TRd start and shift data towards the right padding.
             cycle, energy = adt.writezero_shiftRE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             cycles = + cycle
             energies = + energy
             return cycles, energies
-        elif (instruction == 5):
+        elif (instruction == '5'):
             # write at (right) TRd end and shift data towards left padding.
             cycle, energy = adt.writeone_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             cycles = + cycle
             energies = + energy
             return cycles, energies
-        elif (instruction == 6):
+        elif (instruction == '6'):
             # write at (right) TRd end and shift data towards right padding.
             cycle,energy = adt.writeone_shiftRE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             cycles =+ cycle
@@ -190,6 +200,9 @@ class DBC():
                 for i in range(n, self.bit_length):
                     DBC.Local_row_buffer[local_buffer_count] = self.memory[self.TRd_head][i]
                     local_buffer_count += 1
+
+
+
                 for i in range(local_buffer_count, self.bit_length):
                     DBC.Local_row_buffer[i] = '0'
 
@@ -207,6 +220,7 @@ class DBC():
             count = 0
             s = ''
             hex_num = '0x'
+
             for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
                 s += str(DBC.Local_row_buffer[i])
                 count += 1
@@ -224,7 +238,6 @@ class DBC():
 
 
         elif ('SHR' in instruction):
-            print(instruction)
             command = (instruction.rsplit(' ', 2))
             n = int(command[1])
             local_buffer_count = n

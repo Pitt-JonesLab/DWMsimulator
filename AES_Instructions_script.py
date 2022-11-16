@@ -59,14 +59,17 @@ def get_adress(address):
     return DBC_number, row_number
 
 
-def call_DBC(dbc, row_number, operation, nanowire_num_start_pos, nanowire_num_end_pos, d):
+def call_DBC(dbc, row_number, operation, nanowire_start_pos, nanowire_end_pos, d=None):
 
     if operation == 'overwrite':
-        cycles, energy = dbc.controller(row_number, operation, nanowire_num_start_pos,nanowire_num_end_pos, d)
+        cycles, energy = dbc.controller(row_number, operation, nanowire_start_pos,nanowire_end_pos, d)
+        return cycles, energy
+    elif operation == 1 or operation == 2 or operation == 3 or operation == 4 or operation == 5 or operation == 6:
+        cycles, energy = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos, d)
         return cycles, energy
     else:
         # Calling DBC object for each instruction above
-        cycles, energy, data = dbc.controller(row_number, operation,nanowire_num_start_pos,nanowire_num_end_pos, d)
+        cycles, energy, data = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos)
         return cycles, energy, data
 
 
@@ -117,6 +120,7 @@ for line in lines:
     print('Destinantion Row No:', row_number_destination)
 
     logic_instruction = 'AND OR NOT NAND XOR XNOR NOR ADD MULT'
+
     if '$' in instruction_line[2]:
         address_source = instruction_line[2]
         address_source = (address_source.split("$", 1))
@@ -125,13 +129,15 @@ for line in lines:
         DBC_number_source, row_number_source = get_adress(address_source)
         print('Source DBC No:', DBC_number_source)
         print('Source Row No:', row_number_source)
-        #Calling read functionx
-        cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
-        data_hex = data[2:]
-        nanowire_num_start_pos = 0
-        nanowire_num_end_pos = 511
-        total_cycles += cycles
-        total_energy += energy
+
+        if len(instruction_line) < 3:
+            #Calling read functionx
+            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
+            data_hex = data[2:]
+            nanowire_num_start_pos = 0
+            nanowire_num_end_pos = 511
+            total_cycles += cycles
+            total_energy += energy
 
     else:
         data = instruction_line[2]
@@ -161,23 +167,24 @@ for line in lines:
         elif instruction_line[3] == 'SHL' or instruction_line[3] == 'SHR':
             instruction = instruction_line[3] + ' ' + instruction_line[4]
             # call operations
-            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, nanowire_num_start_pos,nanowire_num_end_pos,  data_hex)
+            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, 511)
             data_hex = data[2:]
             total_cycles += cycles
             total_energy += energy
 
-            cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+            cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
             total_cycles += cycles
             total_energy += energy
         else:
-            # call operations
-            cycles, energy, data = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[3], nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+            # call operations for logic operands
+            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
             data_hex = data[2:]
             total_cycles += cycles
             total_energy += energy
-
             # call write function:
-
+            cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+            total_cycles += cycles
+            total_energy += energy
             # total_cycles += cycles
             # total_energy += energy
     # Close opened file
