@@ -14,19 +14,50 @@ def display(memory,row_number, s):
     TRd_tail = 0
 
     if TRd_pos == 'AP0':
-        start = row_number - 2
-        stop = row_number + 7
-        TRd_head = row_number
-        TRd_tail = row_number + TRd_size
+        if row_number == 0:
+            start = row_number
+            stop = row_number + 8
+            TRd_head = row_number
+            TRd_tail = row_number + TRd_size - 1
+        elif row_number == 1:
+            start = row_number - 1
+            stop = row_number + 7
+            TRd_head = row_number
+            TRd_tail = row_number + TRd_size - 1
+        elif row_number >= 2:
+            start = row_number - 2
+            stop = row_number + 6
+            TRd_head = row_number
+            TRd_tail = row_number + TRd_size - 1
 
-    elif TRd_pos == 'AP1':
-        start = row_number - 7
-        stop = row_number + 2
-        TRd_head = row_number - TRd_size
-        TRd_tail = row_number
+
+    elif TRd_pos == 'AP1' :
+        if row_number == 31:
+            start = row_number - 8
+            stop = row_number
+            TRd_head = row_number - TRd_size + 1
+            TRd_tail = row_number
+        elif row_number == 30:
+            start = row_number - 7
+            stop = row_number + 1
+            TRd_head = row_number - TRd_size + 1
+            TRd_tail = row_number
+        elif row_number <= 29 and row_number >= 5:
+            start = row_number - 6
+            stop = row_number + 2
+            TRd_head = row_number - TRd_size + 1
+            TRd_tail = row_number
+        elif row_number <= 5:
+            start = 0
+            stop = row_number + 2
+            TRd_head = row_number - TRd_size + 1
+            TRd_tail = row_number
+
+
+    # print(start, stop+1,TRd_pos)
 
     # Converting bin to hex
-    for i in range(start, stop):
+    for i in range(start, stop+1):
         t = []
         count = 0
         s = ''
@@ -46,11 +77,11 @@ def display(memory,row_number, s):
 
         # Add to table
         if i == TRd_head:
-            t = ['AP0', i-16, hex_num]
+            t = ['AP0', i, hex_num]
         elif i == TRd_tail:
-            t = ['AP1', i-16, hex_num]
+            t = ['AP1', i, hex_num]
         else:
-            t = [' ', i-16, hex_num]
+            t = [' ', i, hex_num]
 
         table.append(t)
 

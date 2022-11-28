@@ -62,7 +62,7 @@ def get_adress(address):
 def call_DBC(dbc, row_number, operation, nanowire_start_pos, nanowire_end_pos, d=None):
 
     if operation == 'overwrite':
-        cycles, energy = dbc.controller(row_number, operation, nanowire_start_pos,nanowire_end_pos, d)
+        cycles, energy = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos, d)
         return cycles, energy
     elif operation == 1 or operation == 2 or operation == 3 or operation == 4 or operation == 5 or operation == 6:
         cycles, energy = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos, d)
@@ -99,99 +99,108 @@ total_cycles = 0
 total_energy = 0
 
 #Reading Instruction of text file
-instruction_file = open("/Users/paviabera/Desktop/intruction set/AES/AES_instruction_set.txt", "r")
+instruction_file = open("/Users/paviabera/Desktop/KeyGen.txt", "r")
+# instruction_file = open("/Users/paviabera/Desktop/intruction set/AES/AES_instruction_set.txt", "r")
+
 
 # Read single line in file
 lines = instruction_file.readlines()
 
 # Extracting each instruction from Lines:
+break_out_flag = False
 for line in lines:
-    instruction_line = []
-    for word in line.split():
-        if word == '#':
+    if line.strip():
+        instruction_line = []
+        for word in line.split():
+           instruction_line.append(word)
+
+        if instruction_line[0] == '#':
             continue
-        instruction_line.append(word)
-    print('instruction:', instruction_line)
-    address_destination = instruction_line[1]
-    address_destination = (address_destination.split("$", 1))
-    address_destination = int(address_destination[1])
-    DBC_number_destinantion, row_number_destination = get_adress(address_destination)
-    print('Destinantion DBC No:', DBC_number_destinantion)
-    print('Destinantion Row No:', row_number_destination)
+        print('instruction:', instruction_line)
+        address_destination = instruction_line[1]
+        address_destination = (address_destination.split("$", 1))
+        address_destination = int(address_destination[1])
+        DBC_number_destinantion, row_number_destination = get_adress(address_destination)
+        print('Destinantion DBC No:', DBC_number_destinantion)
+        print('Destinantion Row No:', row_number_destination)
 
-    logic_instruction = 'AND OR NOT NAND XOR XNOR NOR ADD MULT'
 
-    if '$' in instruction_line[2]:
-        address_source = instruction_line[2]
-        address_source = (address_source.split("$", 1))
-        address_source = (address_source[1])
-        address_source = int(address_source)
-        DBC_number_source, row_number_source = get_adress(address_source)
-        print('Source DBC No:', DBC_number_source)
-        print('Source Row No:', row_number_source)
+        if '$' in instruction_line[2]:
+            address_source = instruction_line[2]
+            address_source = (address_source.split("$", 1))
+            address_source = (address_source[1])
+            address_source = int(address_source)
+            DBC_number_source, row_number_source = get_adress(address_source)
+            print('Source DBC No:', DBC_number_source)
+            print('Source Row No:', row_number_source)
 
-        if len(instruction_line) < 3:
-            #Calling read functionx
-            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
+            if instruction_line[0] == 'WRITE':
+                #Calling read functionx
+                cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
+                data_hex = data[2:]
+                nanowire_num_start_pos = 0
+                nanowire_num_end_pos = 511
+                total_cycles += cycles
+                total_energy += energy
+
+        else:
+            data = instruction_line[2]
             data_hex = data[2:]
             nanowire_num_start_pos = 0
             nanowire_num_end_pos = 511
-            total_cycles += cycles
-            total_energy += energy
-
-    else:
-        data = instruction_line[2]
-        data_hex = data[2:]
-        nanowire_num_start_pos = 0
-        nanowire_num_end_pos = len(data_hex)*4
 
 
 
-    # instructions for write operations
-    if instruction_line[0] == 'WRITE':
-        # Call Write
-        cycles, energy = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, 'overwrite', nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
-        total_cycles += cycles
-        total_energy += energy
-
-
-    # instructions for CPIM operations
-    elif instruction_line[0] == 'CPIM':
-        if instruction_line[3] == 'WRITE':
-            # call Transverse Write
-            cycles, energy = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5],nanowire_num_start_pos, nanowire_num_end_pos,data_hex)
+        # instructions for write operations
+        if instruction_line[0] == 'WRITE':
+            # Call Write
+            cycles, energy = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, 'overwrite', nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
             total_cycles += cycles
             total_energy += energy
 
 
-        elif instruction_line[3] == 'SHL' or instruction_line[3] == 'SHR':
-            instruction = instruction_line[3] + ' ' + instruction_line[4]
-            # call operations
-            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, 511)
-            data_hex = data[2:]
-            total_cycles += cycles
-            total_energy += energy
+        # instructions for CPIM operations
+        elif instruction_line[0] == 'CPIM':
+            if instruction_line[3] == 'COPY':
+                # call Transverse Write
+                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                total_cycles += cycles
+                total_energy += energy
 
-            cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
-            total_cycles += cycles
-            total_energy += energy
-        else:
-            # call operations for logic operands
-            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
-            data_hex = data[2:]
-            total_cycles += cycles
-            total_energy += energy
-            # call write function:
-            cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
-            total_cycles += cycles
-            total_energy += energy
-            # total_cycles += cycles
-            # total_energy += energy
-    # Close opened file
-    instruction_file.close()
+            elif instruction_line[3] == 'WRITE':
+                # call Transverse Write
+                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                total_cycles += cycles
+                total_energy += energy
 
-# print('The total_cycles and  total_energy is :',total_cycles, total_energy)
-#
+
+            elif instruction_line[3] == 'SHL' or instruction_line[3] == 'SHR':
+                instruction = instruction_line[3] + ' ' + instruction_line[4]
+                # call operations
+                cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, 511)
+                data_hex = data[2:]
+                total_cycles += cycles
+                total_energy += energy
+
+                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                total_cycles += cycles
+                total_energy += energy
+            else:
+                # call operations for logic operands
+                cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
+                data_hex = data[2:]
+                total_cycles += cycles
+                total_energy += energy
+                # call write function:
+                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                total_cycles += cycles
+                total_energy += energy
+                # total_cycles += cycles
+                # total_energy += energy
+        # Close opened file
+        instruction_file.close()
+
+    # print('The total_cycles and  total_energy is :',total_cycles, total_energy)
 
 
 
