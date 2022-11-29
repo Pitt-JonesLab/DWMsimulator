@@ -259,7 +259,7 @@ class DBC():
                 for i in range(0, n):
                     DBC.Local_row_buffer[i] = '0'
 
-                for i in range(n, self.bit_length):
+                for i in range(0, self.bit_length):
                     DBC.Local_row_buffer[local_buffer_count] = self.memory[self.TRd_head][i]
                     local_buffer_count += 1
 
@@ -267,7 +267,7 @@ class DBC():
                 for i in range(0, n):
                     DBC.Local_row_buffer[i] = '0'
 
-                for i in range(n, self.bit_length - n):
+                for i in range(0, self.bit_length - n):
                     DBC.Local_row_buffer[local_buffer_count] = self.memory[self.TRd_tail][i]
                     local_buffer_count += 1
             cycles = + 1

@@ -167,7 +167,7 @@ for line in lines:
                 total_cycles += cycles
                 total_energy += energy
 
-            elif instruction_line[3] == 'WRITE':
+            elif instruction_line[3] == 'STORE':
                 # call Transverse Write
                 cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
                 total_cycles += cycles
