@@ -18,7 +18,7 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
 
             if i == 0:
-                cycle, sum =logicop.Xor(memory, TRd_head - 1 ,nanowire_num_start_pos, nanowire_num_end_pos)
+                cycle, energy, sum =logicop.Xor(memory, TRd_head, 0, 0)
                 carry =
                 carry_prime =
             if i == 1:

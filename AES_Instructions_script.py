@@ -99,8 +99,8 @@ total_cycles = 0
 total_energy = 0
 
 #Reading Instruction of text file
-instruction_file = open("/Users/paviabera/Desktop/KeyGen.txt", "r")
-# instruction_file = open("/Users/paviabera/Desktop/intruction set/AES/AES_instruction_set.txt", "r")
+#instruction_file = open("/Users/paviabera/Desktop/KeyGen.txt", "r")
+instruction_file = open("/Users/paviabera/Desktop/intruction set/AES/AES_instruction_set.txt", "r")
 
 
 # Read single line in file
@@ -134,14 +134,14 @@ for line in lines:
             print('Source DBC No:', DBC_number_source)
             print('Source Row No:', row_number_source)
 
-            if instruction_line[0] == 'WRITE':
-                #Calling read functionx
-                cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
-                data_hex = data[2:]
-                nanowire_num_start_pos = 0
-                nanowire_num_end_pos = 511
-                total_cycles += cycles
-                total_energy += energy
+            # if instruction_line[0] == 'WRITE':
+            #Calling read functionx
+            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
+            data_hex = data[2:]
+            nanowire_num_start_pos = 0
+            nanowire_num_end_pos = 511
+            total_cycles += cycles
+            total_energy += energy
 
         else:
             data = instruction_line[2]
@@ -185,6 +185,17 @@ for line in lines:
                 cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
                 total_cycles += cycles
                 total_energy += energy
+            elif instruction_line[3] == 'CARRY' or instruction_line[3] == 'CARRYPRIME':
+                # call operations
+                cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
+                data_hex = data[2:]
+                total_cycles += cycles
+                total_energy += energy
+
+                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                total_cycles += cycles
+                total_energy += energy
+
             else:
                 # call operations for logic operands
                 cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
@@ -197,6 +208,8 @@ for line in lines:
                 total_energy += energy
                 # total_cycles += cycles
                 # total_energy += energy
+
+
         # Close opened file
         instruction_file.close()
 

@@ -43,7 +43,7 @@ class DBC():
 
         # if instruction == 'overwrite' or instruction == 'Read':
         if abs(self.TRd_head - row_number) < abs(self.TRd_tail - row_number) and self.TRd_head <= (self.memory_size - self.TRd_size):
-            #Move TRd_head
+            # Move TRd_head
             if self.TRd_head > row_number:
                 diff = self.TRd_head - row_number
                 # Cycles for shift
@@ -71,11 +71,16 @@ class DBC():
                 instruction = 'R AP0'
             elif 'SHL' in instruction or 'SHR' in instruction:
                 instruction = instruction + ' ' +'AP0'
+            elif instruction == 'CARRY':
+                instruction = 'CARRY_AP0'
+            elif instruction == 'CARRYPRIME':
+                instruction = 'CARRYPRIME_AP0'
+
 
 
 
         elif abs(self.TRd_head - row_number) > abs(self.TRd_tail - row_number) and self.TRd_tail >= (self.TRd_size-1):
-            #Move TRd_tail
+            # Move TRd_tail
             if self.TRd_tail > row_number:
                 diff = self.TRd_tail - row_number
                 # Cycles for shift
@@ -106,9 +111,14 @@ class DBC():
                 instruction = 'R AP1'
             elif 'SHL' or 'SHR' in instruction:
                 instruction = instruction + ' ' + 'AP1'
+            elif instruction == 'CARRY':
+                instruction = 'CARRY_AP1'
+            elif instruction == 'CARRYPRIME':
+                instruction = 'CARRYPRIME_AP1'
 
 
         elif abs(self.TRd_head - row_number) == abs(self.TRd_tail - row_number):
+            # if equal distance from AP0 and AP1 choose AP0
             diff = self.TRd_head - row_number
             # Cycles for shift
             cycles = + (diff * 2)
@@ -121,6 +131,10 @@ class DBC():
                 instruction = 'R AP0'
             elif 'SHL' or 'SHR' in instruction:
                 instruction = instruction + ' ' + 'AP0'
+            elif instruction == 'CARRY':
+                instruction = 'CARRY_AP0'
+            elif instruction == 'CARRYPRIME':
+                instruction = 'CARRYPRIME_AP0'
 
 
 
@@ -323,7 +337,7 @@ class DBC():
                     s = ''
                     count = 0
 
-            print('Read AP0=  ', (hex_num))
+            # print('Read AP0=  ', (hex_num))
 
             return cycles, energies, hex_num
 
@@ -368,14 +382,25 @@ class DBC():
             return cycles, energies, hex_num
 
         # # Counting carry bit's
-        # elif (instruction == 'carry'):
-        #     cycle, energy, DBC.Local_row_buffer = logicop.carry(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-        #     energies = + energy
-        #
-        # elif (instruction == 'carry prime'):
-        #     cycle, energy, DBC.Local_row_buffer = logicop.carry_prime(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-        #     energies = + energy
-        #
+        elif (instruction == 'CARRY_AP0'):
+            print('here')
+            cycle, energy, Local_buffer = logicop.carry(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            energies = + energy
+            return cycles, energies, Local_buffer
+
+        elif (instruction == 'CARRYPRIME_AP0'):
+            cycle, energy, Local_buffer = logicop.carry_prime(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            energies = + energy
+            return cycles, energies, Local_buffer
+        elif (instruction == 'CARRY_AP1'):
+            cycle, energy, Local_buffer = logicop.carry(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            energies = + energy
+            return cycles, energies, Local_buffer
+
+        elif (instruction == 'CARRYPRIME_AP1'):
+            cycle, energy, Local_buffer = logicop.carry_prime(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            energies = + energy
+            return cycles, energies, Local_buffer
         # Logic Operations
         elif (instruction == 'AND'):
             cycle, energies, Local_buffer = logicop.And(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
