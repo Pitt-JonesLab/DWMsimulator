@@ -10,7 +10,7 @@ def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, 
     nanowire_num_end_pos = int(nanowire_num_end_pos)
 
     # Shifting the data within the TRd space to right and writing at the TRd head
-    for i in range(writeport + TRd_size, writeport, -1):
+    for i in range(writeport + TRd_size - 1, writeport, -1):
         for j in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
 
             memory[i][j] = memory[i-1][j]

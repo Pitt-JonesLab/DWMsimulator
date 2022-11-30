@@ -99,8 +99,8 @@ total_cycles = 0
 total_energy = 0
 
 #Reading Instruction of text file
-instruction_file = open("/Users/paviabera/Desktop/KeyGen.txt", "r")
-# instruction_file = open("/Users/paviabera/Desktop/intruction set/AES/AES_instruction_set.txt", "r")
+# instruction_file = open("/Users/paviabera/Desktop/KeyGen.txt", "r")
+instruction_file = open("/Users/paviabera/Desktop/intruction set/AES/AES_instruction_set.txt", "r")
 
 
 # Read single line in file
