@@ -196,6 +196,7 @@ for line in lines:
                 total_cycles += cycles
                 total_energy += energy
 
+
             else:
                 # call operations for logic operands
                 cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)

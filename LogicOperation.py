@@ -78,8 +78,10 @@ def Xor(memory, row_number, nanowire_num_start_pos,nanowire_num_end_pos):
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
         c = 0
         for j in range(TRd_head, TRd_end_loc + 1):
+
             if memory[j][i] == '1':
                 c += 1
+
 
         if (c % 2 == 0):
             val = '0'
@@ -100,7 +102,7 @@ def Xor(memory, row_number, nanowire_num_start_pos,nanowire_num_end_pos):
             hex_num += (string_hex_num)
             s = ''
             count = 0
-    print('XOR ', hex_num)
+
 
     return 1, 0.000958797, hex_num
 
@@ -135,7 +137,7 @@ def Xnor(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
             hex_num += (string_hex_num)
             s = ''
             count = 0
-    print('XNOR ', hex_num)
+
 
     return 1, 0.000958797, hex_num
 

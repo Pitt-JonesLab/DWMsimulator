@@ -11,6 +11,7 @@ import numpy as np
 # Importing all
 import WriteData as adt
 import LogicOperation as logicop
+import ArithmaticOperation as ao
 
 
 class DBC():
@@ -383,7 +384,6 @@ class DBC():
 
         # # Counting carry bit's
         elif (instruction == 'CARRY_AP0'):
-            print('here')
             cycle, energy, Local_buffer = logicop.carry(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
             energies = + energy
             return cycles, energies, Local_buffer
@@ -393,12 +393,12 @@ class DBC():
             energies = + energy
             return cycles, energies, Local_buffer
         elif (instruction == 'CARRY_AP1'):
-            cycle, energy, Local_buffer = logicop.carry(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            cycle, energy, Local_buffer = logicop.carry(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos)
             energies = + energy
             return cycles, energies, Local_buffer
 
         elif (instruction == 'CARRYPRIME_AP1'):
-            cycle, energy, Local_buffer = logicop.carry_prime(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            cycle, energy, Local_buffer = logicop.carry_prime(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos)
             energies = + energy
             return cycles, energies, Local_buffer
         # Logic Operations
@@ -430,6 +430,17 @@ class DBC():
         elif instruction == 'NOT':
             cycle, energies, Local_buffer = logicop.Not(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
             return cycle, energies, Local_buffer
+
+        # Arithmatic operation (Addition and multiplication)
+        elif instruction == 'ADD':
+            cycle, energies, Local_buffer = ao.addition(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            return cycle, energies, Local_buffer
+
+        elif instruction == 'MULT':
+            cycle, energies, Local_buffer = ao.multuply(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            return cycle, energies, Local_buffer
+
+
 
 
 
