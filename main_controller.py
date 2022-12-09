@@ -1,12 +1,11 @@
 '''
 Author : Pavia Bera - University of South Florida
-
 This is a simulator for Domain wall memory (DWM)
 DWM leverages the 'shift-register' nature of spintronic domain-wall memory (DWM).
 Shift-based scheme utilizes a multi-nanowire approach to ensure that reads and writes
 can be more effectively aligned with access ports for simultaneous access in the same cycle.
-
 '''
+
 import numpy as np
 # Importing all
 import WriteData as adt
@@ -36,8 +35,9 @@ class DBC():
         nanowire_num_start_pos = int(nanowire_num_start_pos)
         nanowire_num_end_pos = int(nanowire_num_end_pos)
 
-        energies = 0
-        cycles = 0
+        perform_param = dict()
+        keys = ['write', 'TR_writes', 'read', 'TR_reads', 'shift', 'cpu_dma']
+        perform_param = {key: 0 for key in keys}
 
         row_number = int(write_port)
         print('prev head, prev tail, row no:', self.TRd_head, self.TRd_tail, write_port)
@@ -47,19 +47,41 @@ class DBC():
             # Move TRd_head
             if self.TRd_head > row_number:
                 diff = self.TRd_head - row_number
-                # Cycles for shift
-                cycles = + (diff * 2)
                 self.TRd_head = self.TRd_head - diff
                 self.TRd_tail = self.TRd_head + DBC.TRd_size - 1
+                ## performance parameters
+                perform_param['write'] += 0
+                perform_param['TR_writes'] += 0
+                perform_param['read'] += 0
+                perform_param['TR_reads'] += 0
+                perform_param['shift'] += 1 * diff
+                perform_param['cpu_dma'] += 0
+
+
+
             elif self.TRd_head < row_number:
                 diff = row_number - self.TRd_head
-                # Cycles for shift
-                cycles = + (diff * 2)
                 self.TRd_head = self.TRd_head + diff
                 self.TRd_tail = self.TRd_head + DBC.TRd_size - 1
+                ## performance parameters
+                perform_param['write'] += 0
+                perform_param['TR_writes'] += 0
+                perform_param['read'] += 0
+                perform_param['TR_reads'] += 0
+                perform_param['shift'] += 1 * diff
+                perform_param['cpu_dma'] += 0
+
             else:
                 self.TRd_head = row_number
                 self.TRd_tail = self.TRd_head + DBC.TRd_size - 1
+                ## performance parameters
+                perform_param['write'] += 0
+                perform_param['TR_writes'] += 0
+                perform_param['read'] += 0
+                perform_param['TR_reads'] += 0
+                perform_param['shift'] += 1
+                perform_param['cpu_dma'] += 0
+
 
             self.TRd_head = int(self.TRd_head)
             self.TRd_tail = int(self.TRd_tail)
@@ -84,21 +106,41 @@ class DBC():
             # Move TRd_tail
             if self.TRd_tail > row_number:
                 diff = self.TRd_tail - row_number
-                # Cycles for shift
-                cycles = + (diff * 2)
                 self.TRd_tail = self.TRd_tail - diff
                 self.TRd_head = self.TRd_tail - DBC.TRd_size + 1
 
+                ## performance parameters
+                perform_param['write'] += 0
+                perform_param['TR_writes'] += 0
+                perform_param['read'] += 0
+                perform_param['TR_reads'] += 0
+                perform_param['shift'] += 1 * diff
+                perform_param['cpu_dma'] += 0
+
             elif self.TRd_tail < row_number:
                 diff = row_number - self.TRd_tail
-                # Cycles for shift
-                cycles = + (diff * 2)
                 self.TRd_tail = self.TRd_tail + diff
                 self.TRd_head = self.TRd_tail - DBC.TRd_size + 1
+
+                ## performance parameters
+                perform_param['write'] += 0
+                perform_param['TR_writes'] += 0
+                perform_param['read'] += 0
+                perform_param['TR_reads'] += 0
+                perform_param['shift'] += 1 * diff
+                perform_param['cpu_dma'] += 0
 
             else:
                 self.TRd_tail = row_number
                 self.TRd_head = self.TRd_tail - DBC.TRd_size + 1
+
+                ## performance parameters
+                perform_param['write'] += 0
+                perform_param['TR_writes'] += 0
+                perform_param['read'] += 0
+                perform_param['TR_reads'] += 0
+                perform_param['shift'] += 1
+                perform_param['cpu_dma'] += 0
 
 
             self.TRd_head = int(self.TRd_head)
@@ -125,6 +167,16 @@ class DBC():
             cycles = + (diff * 2)
             self.TRd_head = self.TRd_head - diff
             self.TRd_tail = self.TRd_head + DBC.TRd_size - 1
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 1 * diff
+            perform_param['cpu_dma'] += 0
+
+
             # Call read or write at AP0
             if instruction == 'overwrite':
                 instruction = 'W AP0'
@@ -144,79 +196,116 @@ class DBC():
             data_hex_size = len(data_hex) * 4
             data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
 
-
-            # DBC.Local_row_buffer = list(DBC.Local_row_buffer)
-            # # s[1] = "_"
-            # # s = "".join(s)
-            # print(len(data_bin), len(DBC.Local_row_buffer))
             for i in range(0, len(data_bin)):
                 DBC.Local_row_buffer[i] = data_bin[i]
-
-
-
-            # for idx, item in enumerate(data_bin):
-            #     DBC.Local_row_buffer[idx] = item
-            # print(DBC.Local_row_buffer)
-
-        # print('TRd_head', self.TRd_head)
-        # print('TRd_tail', self.TRd_tail)
 
         # # Write instruction
         if (instruction == '1'):
             self.TRd_head = row_number
             # write at (left) TRd start loc and shift data right within the TRd space
-            cycle, energy = adt.writezero(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
-            cycles = + cycle
-            energies = + energy
-            return cycles, energies
+            adt.writezero(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += (1)
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param
 
         elif (instruction == '2'):
             self.TRd_head = row_number - DBC.TRd_size
             self.TRd_tail = row_number
             # write at (right) TRd end loc and shift data left within the TRd space.
-            cycle, energy = adt.writeone(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
-            cycles = + cycle
-            energies = + energy
-            return cycles, energies
+            adt.writeone(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 1
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param
 
         if (instruction == 'W AP0' ):
             # overwrite at left side (TRd start position)
-            cycle, energy = adt.overwrite_zero(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
-            cycles = + cycle
-            energies = + energy
-            return cycles, energies
+            adt.overwrite_zero(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
+            ## performance parameters
+            perform_param['write'] += 1
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param
 
         elif (instruction == 'W AP1'):
             # overwrite at right side(TRd end position)
-            cycle, energy = adt.overwrite_one(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
-            cycles = + cycle
-            energies = + energy
-            return cycles, energies
+            adt.overwrite_one(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
+            ## performance parameters
+            perform_param['write'] += 1
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
 
-        # elif (instruction == '3'):
-        #     # write at (left) TRd start and shift data towards the left padding.
-        #     cycle,energy = adt.writezero_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
-        #     cycles = + cycle
-        #     energies = + energy
-        #     return cycles, energies
-        # elif (instruction == '4'):
-        #     # write at (left) TRd start and shift data towards the right padding.
-        #     cycle, energy = adt.writezero_shiftRE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
-        #     cycles = + cycle
-        #     energies = + energy
-        #     return cycles, energies
-        # elif (instruction == '5'):
-        #     # write at (right) TRd end and shift data towards left padding.
-        #     cycle, energy = adt.writeone_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
-        #     cycles = + cycle
-        #     energies = + energy
-        #     return cycles, energies
-        # elif (instruction == '6'):
-        #     # write at (right) TRd end and shift data towards right padding.
-        #     cycle,energy = adt.writeone_shiftRE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
-        #     cycles =+ cycle
-        #     energies = + energy
-        #     return cycles, energies
+            return perform_param
+
+        elif (instruction == '3'):
+            # write at (left) TRd start and shift data towards the left padding.
+            adt.writezero_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 1
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param
+
+        elif (instruction == '4'):
+            # write at (left) TRd start and shift data towards the right padding.
+            adt.writezero_shiftRE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += (1 )
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param
+
+        elif (instruction == '5'):
+            # write at (right) TRd end and shift data towards left padding.
+            adt.writeone_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 1
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param
+
+        elif (instruction == '6'):
+            # write at (right) TRd end and shift data towards right padding.
+            adt.writeone_shiftRE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 1
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param
 
 
         #Logical shift
@@ -242,8 +331,7 @@ class DBC():
                     DBC.Local_row_buffer[i] = '0'
 
 
-            cycles = + 1
-            energies = + 1
+
             # Converting binary data at TRd head to Hex for verification/visualization
             count = 0
             s = ''
@@ -260,7 +348,16 @@ class DBC():
                     count = 0
 
             print("local Buffer :", (hex_num))
-            return cycles, energies, hex_num
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, hex_num
 
 
 
@@ -285,8 +382,7 @@ class DBC():
                 for i in range(0, self.bit_length - n):
                     DBC.Local_row_buffer[local_buffer_count] = self.memory[self.TRd_tail][i]
                     local_buffer_count += 1
-            cycles = + 1
-            energies = + 1
+
             # Converting binary data at TRd head to Hex for verification/visualization
             count = 0
             s = ''
@@ -301,7 +397,16 @@ class DBC():
                     s = ''
                     count = 0
             print("local Buffer :", hex_num)
-            return cycles, energies, hex_num
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, hex_num
 
 
 
@@ -319,9 +424,6 @@ class DBC():
             for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
                 DBC.Local_row_buffer[i] = self.memory[self.TRd_head][i]
 
-            cycles = + 1
-            energies = + 1
-
             # converting to Hex
             count = 0
             s = ''
@@ -338,29 +440,19 @@ class DBC():
                     s = ''
                     count = 0
 
-            # print('Read AP0=  ', (hex_num))
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 1
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
 
-            return cycles, energies, hex_num
+            return perform_param, hex_num
 
         elif (instruction == 'R AP1'):
             for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
                 DBC.Local_row_buffer[i] = self.memory[self.TRd_tail][i]
-
-            cycles = + 1
-            energies = + 1
-
-
-
-            # n = DBC.Local_row_buffer[:]
-            # n = "".join([str(item) for item in n])
-            # # convert binary to int
-            # num = int(n, 2)
-            # # convert int to hexadecimal
-            # hex_num = hex(num)
-            #
-            # n = []
-            # for i in range (2, len(hex_num)):
-            #     n += (hex_num[i])
 
             # converting to Hex
             count = 0
@@ -378,67 +470,187 @@ class DBC():
                     s = ''
                     count = 0
 
-            print('Read AP1=  ', (hex_num))
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 1
+            perform_param['TR_reads'] += 0
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
 
-            return cycles, energies, hex_num
+            return perform_param, hex_num
 
         # # Counting carry bit's
         elif (instruction == 'CARRY_AP0'):
-            cycle, energy, Local_buffer = logicop.carry(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            energies = + energy
-            return cycles, energies, Local_buffer
+            Local_buffer = logicop.carry(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif (instruction == 'CARRYPRIME_AP0'):
-            cycle, energy, Local_buffer = logicop.carry_prime(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            energies = + energy
-            return cycles, energies, Local_buffer
+            Local_buffer = logicop.carry_prime(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
+
         elif (instruction == 'CARRY_AP1'):
-            cycle, energy, Local_buffer = logicop.carry(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos)
-            energies = + energy
-            return cycles, energies, Local_buffer
+            Local_buffer = logicop.carry(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif (instruction == 'CARRYPRIME_AP1'):
-            cycle, energy, Local_buffer = logicop.carry_prime(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos)
-            energies = + energy
-            return cycles, energies, Local_buffer
+            Local_buffer = logicop.carry_prime(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
+
         # Logic Operations
         elif (instruction == 'AND'):
-            cycle, energies, Local_buffer = logicop.And(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            return cycles, energies, Local_buffer
+            Local_buffer = logicop.And(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif instruction == 'NAND':
-            cycle, energies, Local_buffer = logicop.Nand(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            return cycle, energies, Local_buffer
+            Local_buffer = logicop.Nand(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif instruction == 'XOR':
-            cycle, energies, Local_buffer = logicop.Xor(self.memory, self.TRd_head,nanowire_num_start_pos, nanowire_num_end_pos)
-            cycles = + cycle
-            return cycle, energies, Local_buffer
+            Local_buffer = logicop.Xor(self.memory, self.TRd_head,nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif instruction == 'XNOR':
-            cycle, energies, Local_buffer = logicop.Xnor(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            return cycle, energies, Local_buffer
+            Local_buffer = logicop.Xnor(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif instruction == 'OR':
-            cycle, energies, Local_buffer = logicop.Or(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            return cycle, energies, Local_buffer
+            Local_buffer = logicop.Or(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif instruction == 'NOR':
-            cycle, energies, Local_buffer = logicop.Nor(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            return cycle, energies, Local_buffer
+            Local_buffer = logicop.Nor(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif instruction == 'NOT':
-            cycle, energies, Local_buffer = logicop.Not(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            return cycle, energies, Local_buffer
+            Local_buffer = logicop.Not(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         # Arithmatic operation (Addition and multiplication)
         elif instruction == 'ADD':
-            cycle, energies, Local_buffer = ao.addition(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            return cycle, energies, Local_buffer
+            Local_buffer = ao.addition(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
         elif instruction == 'MULT':
-            cycle, energies, Local_buffer = ao.multuply(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            return cycle, energies, Local_buffer
+            Local_buffer = ao.multiply(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['shift'] += 0
+            perform_param['cpu_dma'] += 0
+
+            return perform_param, Local_buffer
 
 
 

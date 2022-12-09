@@ -4,7 +4,6 @@ This is the script that uses the DWM simulator to run differrent algorithm.
 
 from main_controller import DBC
 
-
 def get_adress(address):
 
     if address <= 31:
@@ -52,9 +51,9 @@ def get_adress(address):
     elif address >= 448 and address <= 479:
         DBC_number = 14
         row_number = address - 448
-    elif address >= 478 and address <= 509:
+    elif address >= 480 and address <= 511:
         DBC_number = 15
-        row_number = address - 478
+        row_number = address - 480
 
     return DBC_number, row_number
 
@@ -62,15 +61,15 @@ def get_adress(address):
 def call_DBC(dbc, row_number, operation, nanowire_start_pos, nanowire_end_pos, d=None):
 
     if operation == 'overwrite':
-        cycles, energy = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos, d)
-        return cycles, energy
+        param = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos, d)
+        return param
     elif operation == 1 or operation == 2 or operation == 3 or operation == 4 or operation == 5 or operation == 6:
-        cycles, energy = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos, d)
-        return cycles, energy
+        param = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos, d)
+        return param
     else:
         # Calling DBC object for each instruction above
-        cycles, energy, data = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos)
-        return cycles, energy, data
+        param, data = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos)
+        return param, data
 
 
 def write_type(dbcs, row_number_destination, write_type, nanowire_num_start_pos, nanowire_num_end_pos, data_hex):
@@ -79,29 +78,31 @@ def write_type(dbcs, row_number_destination, write_type, nanowire_num_start_pos,
     if write_type == 0:
         # Type 0: Write back normally
         # Call Write
-        cycles, energy = call_DBC(dbcs, row_number_destination, 'overwrite',  nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        param = call_DBC(dbcs, row_number_destination, 'overwrite',  nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
     elif write_type >= 1 and  write_type <= 6:
         # Type 1: Transverse writes
-        cycles, energy = call_DBC(dbcs, row_number_destination, write_type, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+        param = call_DBC(dbcs, row_number_destination, write_type, nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
 
     elif write_type == 7:
         raise Exception("Sorry, no operation for seven")
 
 
-    return  cycles, energy
+    return  param
 
 
+
+##############################################################################################################################################################################################################################
+
+# Parameter Table
+perform_param = dict()
+keys = ['write','TR_writes', 'read', 'TR_reads', 'shift', 'cpu_dma']
+perform_param = {key: 0 for key in keys}
 
 # Creating 16 DBC objects
 dbcs = [DBC() for i in range(16)]
 
-total_cycles = 0
-total_energy = 0
-
 #Reading Instruction of text file
-# instruction_file = open("/Users/paviabera/Desktop/KeyGen.txt", "r")
-instruction_file = open("/Users/paviabera/Desktop/intruction set/AES/AES_instruction_set.txt", "r")
-
+instruction_file = open("/Users/paviabera/Desktop/dot product.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
@@ -112,7 +113,8 @@ for line in lines:
     if line.strip():
         instruction_line = []
         for word in line.split():
-           instruction_line.append(word)
+            if not '//' in word:
+                instruction_line.append(word)
 
         if instruction_line[0] == '#':
             continue
@@ -136,12 +138,18 @@ for line in lines:
 
             # if instruction_line[0] == 'WRITE':
             #Calling read functionx
-            cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
+            param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, 511, None)
+            perform_param['write'] += param_table['write']
+            perform_param['TR_writes'] += param_table['TR_writes']
+            perform_param['read'] += param_table['read']
+            perform_param['TR_reads'] += param_table['TR_reads']
+            perform_param['shift'] += param_table['shift']
+            perform_param['cpu_dma'] += param_table['cpu_dma']
+
             data_hex = data[2:]
             nanowire_num_start_pos = 0
             nanowire_num_end_pos = 511
-            total_cycles += cycles
-            total_energy += energy
+
 
         else:
             data = instruction_line[2]
@@ -154,65 +162,179 @@ for line in lines:
         # instructions for write operations
         if instruction_line[0] == 'WRITE':
             # Call Write
-            cycles, energy = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, 'overwrite', nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
-            total_cycles += cycles
-            total_energy += energy
+            param_table = call_DBC(dbcs[DBC_number_destinantion], row_number_destination, 'overwrite', nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
+            perform_param['write'] += param_table['write']
+            perform_param['TR_writes'] += param_table['TR_writes']
+            perform_param['read'] += param_table['read']
+            perform_param['TR_reads'] += param_table['TR_reads']
+            perform_param['shift'] += param_table['shift']
+            perform_param['cpu_dma'] += param_table['cpu_dma']
 
 
         # instructions for CPIM operations
         elif instruction_line[0] == 'CPIM':
             if instruction_line[3] == 'COPY':
                 # call Transverse Write
-                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
-                total_cycles += cycles
-                total_energy += energy
+                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
 
             elif instruction_line[3] == 'STORE':
                 # call Transverse Write
-                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
-                total_cycles += cycles
-                total_energy += energy
+                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += (param_table['cpu_dma'] + 1)
 
 
             elif instruction_line[3] == 'SHL' or instruction_line[3] == 'SHR':
                 instruction = instruction_line[3] + ' ' + instruction_line[4]
                 # call operations
-                cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, 511)
+                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, 511)
                 data_hex = data[2:]
-                total_cycles += cycles
-                total_energy += energy
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
 
-                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
-                total_cycles += cycles
-                total_energy += energy
+
+                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
+
             elif instruction_line[3] == 'CARRY' or instruction_line[3] == 'CARRYPRIME':
                 # call operations
-                cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
+                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
                 data_hex = data[2:]
-                total_cycles += cycles
-                total_energy += energy
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
 
-                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
-                total_cycles += cycles
-                total_energy += energy
+
+                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
 
 
+            elif instruction_line[3] == 'ADD':
+                # call operations
+                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, instruction_line[4])
+                data_hex = data[2:]
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
+
+
+                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
+
+            elif instruction_line[3] == 'MULT':
+                # Read DBC 15 row 0 for A operand
+                # Calling read functionx
+                param_table, A = call_DBC(dbcs[15], 0, 'Read', 0, 511, None)
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
+
+                data_hex = A[2:]
+                # call operations
+                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0,
+                                             instruction_line[4])
+                data_hex = data[2:]
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
+
+                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0,
+                                         511, data_hex)
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
             else:
                 # call operations for logic operands
-                cycles, energy, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
+                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, 511)
                 data_hex = data[2:]
-                total_cycles += cycles
-                total_energy += energy
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
+
                 # call write function:
-                cycles, energy = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
-                total_cycles += cycles
-                total_energy += energy
-                # total_cycles += cycles
-                # total_energy += energy
+                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['cpu_dma'] += param_table['cpu_dma']
+
+
 
 
         # Close opened file
         instruction_file.close()
+
+    # Calculate Cycle and Energy
+    total_energy = 0
+    total_cycles = 0
+
+    total_energy += perform_param['write'] * 0.1
+    total_energy += perform_param['TR_writes'] * 0.3
+    total_energy += perform_param['read'] * 0.7
+    total_energy += perform_param['TR_reads'] * 0.504676821
+    total_energy += perform_param['shift'] * 0.3
+    total_energy += perform_param['cpu_dma'] * 0.000958797
+
+    total_cycles += perform_param['write'] * 0.1
+    total_cycles += perform_param['TR_writes'] * 0.3
+    total_cycles += perform_param['read'] * 0.7
+    total_cycles += perform_param['TR_reads'] * 0.504676821
+    total_cycles += perform_param['shift'] * 0.3
+    total_cycles += perform_param['cpu_dma'] * 0.000958797
+
+
+print(perform_param)
 
     # print('The total_cycles and  total_energy is :',total_cycles, total_energy)
 
