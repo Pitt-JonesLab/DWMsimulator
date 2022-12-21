@@ -64,20 +64,25 @@ def multiply(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
     energy = 0
     result = []
 
-    # read AP0 where A is stored
+    # read AP0 where B is stored
     B = memory[TRd_head][:nanowire_num_end_pos]
+
+
     # calculate the length of B
 
-    # read from $480 (DBC 15 )where A is stored
+    # read from $480 (DBC 15) where A is stored
+
+    dbc = nanowire_num_start_pos
+    A = dbc.controller(row_number, 'read', 0, 8)
     A = memory[TRd_end_loc][:nanowire_num_end_pos]
 
-    # make (len B) copies of AP0 (X)
-    shifted_A = shifted_by_one(A,nanowire_num_end_pos)
+    # # make (len B) copies of AP0 (X)
+    # shifted_A = shifted_by_one(A,nanowire_num_end_pos)
 
-    for i, l in enumerate(shifted_A):
-        for j in range(0, ):
-            if B[i] != '0':
-                result.append(l)
+    # for i, l in enumerate(shifted_A):
+    #     for j in range(0, ):
+    #         if B[i] != '0':
+    #             result.append(l)
 
     # for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
     #     c = 0

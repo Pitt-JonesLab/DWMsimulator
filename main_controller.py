@@ -48,6 +48,7 @@ class DBC():
             if self.TRd_head > row_number:
                 diff = self.TRd_head - row_number
                 self.TRd_head = self.TRd_head - diff
+                print('diff', diff)
                 self.TRd_tail = self.TRd_head + DBC.TRd_size - 1
                 ## performance parameters
                 perform_param['write'] += 0
@@ -79,7 +80,7 @@ class DBC():
                 perform_param['TR_writes'] += 0
                 perform_param['read'] += 0
                 perform_param['TR_reads'] += 0
-                perform_param['shift'] += 1
+                perform_param['shift'] += 0
                 perform_param['cpu_dma'] += 0
 
 
@@ -139,7 +140,7 @@ class DBC():
                 perform_param['TR_writes'] += 0
                 perform_param['read'] += 0
                 perform_param['TR_reads'] += 0
-                perform_param['shift'] += 1
+                perform_param['shift'] += 0
                 perform_param['cpu_dma'] += 0
 
 
@@ -163,6 +164,7 @@ class DBC():
         elif abs(self.TRd_head - row_number) == abs(self.TRd_tail - row_number):
             # if equal distance from AP0 and AP1 choose AP0
             diff = self.TRd_head - row_number
+            print('diff', diff)
             # Cycles for shift
             cycles = + (diff * 2)
             self.TRd_head = self.TRd_head - diff
@@ -256,6 +258,7 @@ class DBC():
             return perform_param
 
         elif (instruction == '3'):
+            #TODO: fix writre extremity write count
             # write at (left) TRd start and shift data towards the left padding.
             adt.writezero_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
@@ -273,7 +276,7 @@ class DBC():
             adt.writezero_shiftRE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
             perform_param['write'] += 0
-            perform_param['TR_writes'] += (1 )
+            perform_param['TR_writes'] += (1)
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
@@ -352,8 +355,8 @@ class DBC():
             ## performance parameters
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += (1)
+            perform_param['read'] += 1
+            perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -401,8 +404,8 @@ class DBC():
             ## performance parameters
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += (1)
+            perform_param['read'] += 1
+            perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -448,6 +451,7 @@ class DBC():
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
+
             return perform_param, hex_num
 
         elif (instruction == 'R AP1'):
@@ -478,6 +482,8 @@ class DBC():
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
+
+
             return perform_param, hex_num
 
         # # Counting carry bit's
@@ -488,7 +494,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['TR_reads'] += 1
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -501,7 +507,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['TR_reads'] += 1
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -514,7 +520,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -527,7 +533,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -541,7 +547,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1*nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -554,7 +560,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -567,7 +573,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -580,7 +586,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -593,7 +599,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -606,7 +612,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -619,7 +625,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -632,8 +638,8 @@ class DBC():
             ## performance parameters
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['read'] += 1
+            perform_param['TR_reads'] += 3 - 1/nanowire_num_end_pos - 2/nanowire_num_end_pos
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -646,7 +652,7 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1 * nanowire_num_end_pos)
+            perform_param['TR_reads'] += 3 - 1/nanowire_num_end_pos - 2/nanowire_num_end_pos
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
