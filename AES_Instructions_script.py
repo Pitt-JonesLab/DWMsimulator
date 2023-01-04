@@ -105,7 +105,7 @@ perform_param = {key: 0 for key in keys}
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of text file
-instruction_file = open("/Users/paviabera/Desktop/BitmapIndices.txt", "r")
+instruction_file = open("/Users/paviabera/Desktop/add.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
@@ -243,6 +243,7 @@ for line in lines:
 
 
             elif instruction_line[3] == 'ADD':
+                bit_no = instruction_line[4]
                 # call operations
                 param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, instruction_line[4])
                 data_hex = data[2:]
@@ -252,6 +253,7 @@ for line in lines:
                 perform_param['TR_reads'] += param_table['TR_reads']
                 perform_param['shift'] += param_table['shift']
                 perform_param['cpu_dma'] += param_table['cpu_dma']
+                print('add result', data)
 
 
                 param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
@@ -266,6 +268,7 @@ for line in lines:
 
                 # shift A for length of A
                 bit_no = instruction_line[4]
+
                 for i in range(0, int(bit_no)):
                     # Shift by 1 and write
                     instruction = 'SHR' + ' ' + '1'

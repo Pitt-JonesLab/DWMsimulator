@@ -20,22 +20,30 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
         memory[TRd_head][i] = '0'
         memory[TRd_end_loc][i] = '0'
 
+    # display aftre appending zeros
+    # display(memory, 0, 'AP0')
+
+
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos - 2):
-
         carry = carry_add(memory, TRd_head, i, i)
-
         # write carry at next nanowire at AP1
         memory[TRd_end_loc][i+1] = carry
         carry_prime = carry_prime_add(memory, TRd_head, i, i)
-
         # write carry prime at next to next nanowire at AP0
         memory[TRd_head][i + 2] = carry_prime
-        # print(TRd_head)
+
+    print('after carry and carry prime')
+    display(memory, 0, 'AP0')
+
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos - 2):
         sum = xor_add(memory, TRd_head, i, i)
 
         # write sum at the same nanowire at AP0
         memory[TRd_head][i] = sum
         result += sum
+
+    print('after XOR')
+    display(memory, 0, 'AP0')
 
     # Converting binary data at TRd head to Hex for verification/visualization
     count = 0
@@ -52,7 +60,7 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
             count = 0
 
 
-    return 1, 1, hex_num
+    return hex_num
 
 
 

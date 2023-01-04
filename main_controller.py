@@ -258,7 +258,7 @@ class DBC():
             return perform_param
 
         elif (instruction == '3'):
-            #TODO: fix writre extremity write count
+            #TODO: fix write extremity write count
             # write at (left) TRd start and shift data towards the left padding.
             adt.writezero_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
