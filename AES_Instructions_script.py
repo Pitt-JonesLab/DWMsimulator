@@ -105,7 +105,7 @@ perform_param = {key: 0 for key in keys}
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of text file
-instruction_file = open("/Users/paviabera/Desktop/add.txt", "r")
+instruction_file = open("/Users/paviabera/Desktop/mult.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
@@ -160,7 +160,11 @@ for line in lines:
             nanowire_num_start_pos = 0
             nanowire_num_end_pos = 511
 
-
+        # append trailing zeros
+        if (len(data_hex) != 128):
+        # mask data_hex with zeros:
+            N = 128 - len(data_hex)
+            data_hex = data_hex.ljust(N + len(data_hex), '0')
 
         # instructions for write operations
         if instruction_line[0] == 'WRITE':
@@ -189,7 +193,8 @@ for line in lines:
 
             elif instruction_line[3] == 'STORE':
                 # TODO: ~ WRITE op
-                # call Transverse Write
+                # call read and then write
+
                 param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
 
                 perform_param['write'] += param_table['write']
@@ -212,7 +217,8 @@ for line in lines:
                 perform_param['shift'] += param_table['shift']
                 perform_param['cpu_dma'] += param_table['cpu_dma']
 
-                #TODO: write over all nanowires
+
+
                 param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
                 perform_param['write'] += param_table['write']
                 perform_param['TR_writes'] += param_table['TR_writes']
@@ -253,7 +259,6 @@ for line in lines:
                 perform_param['TR_reads'] += param_table['TR_reads']
                 perform_param['shift'] += param_table['shift']
                 perform_param['cpu_dma'] += param_table['cpu_dma']
-                print('add result', data)
 
 
                 param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, 511, data_hex)
@@ -267,13 +272,13 @@ for line in lines:
             elif instruction_line[3] == 'MULT':
 
                 # shift A for length of A
-                bit_no = instruction_line[4]
+                bit_no = int(instruction_line[4])
 
-                for i in range(0, int(bit_no)):
+                for i in range(0, bit_no-1):
                     # Shift by 1 and write
                     instruction = 'SHR' + ' ' + '1'
                     # call operations
-                    param_table, A = call_DBC(dbcs[15], 0, instruction, 0, 511)
+                    param_table, A = call_DBC(dbcs[15], i, instruction, 0, 511)
                     A_hex = A[2:]
                     perform_param['write'] += param_table['write']
                     perform_param['TR_writes'] += param_table['TR_writes']
@@ -290,14 +295,32 @@ for line in lines:
                     perform_param['shift'] += param_table['shift']
                     perform_param['cpu_dma'] += param_table['cpu_dma']
 
-                for i in range(0, int(bit_no)):
-                    # Read B and Mask shifted A.
-                    None
+                # Convert hex data to bin
+                data_hex_size = int(bit_no/4)
+                data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
 
+                # Read B(data_hex) bitwise and Mask shifted A with zeros.
+                N = 128
+                mask_zeros = ''
+                mask_zeros = mask_zeros.ljust(N, '0')
+                # print(len(mask_zeros))
+                # print('data_bin[i]', type(data_bin[i]))
+
+                for i in range(0, int(bit_no)):
+
+                    if (int(data_bin[i]) == 0):
+                        # print('mask with zeros')
+                        param_table = write_type(dbcs[15], i, 0, 0, 511, mask_zeros)
+                        perform_param['write'] += param_table['write']
+                        perform_param['TR_writes'] += param_table['TR_writes']
+                        perform_param['read'] += param_table['read']
+                        perform_param['TR_reads'] += param_table['TR_reads']
+                        perform_param['shift'] += param_table['shift']
+                        perform_param['cpu_dma'] += param_table['cpu_dma']
 
 
                 # call mult operations
-                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, instruction_line[4])
+                param_table, data = call_DBC(dbcs[15], 0, instruction_line[3], 0, instruction_line[4])
                 data_hex = data[2:]
                 perform_param['write'] += param_table['write']
                 perform_param['TR_writes'] += param_table['TR_writes']

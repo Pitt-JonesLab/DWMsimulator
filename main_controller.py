@@ -40,7 +40,7 @@ class DBC():
         perform_param = {key: 0 for key in keys}
 
         row_number = int(write_port)
-        print('prev head, prev tail, row no:', self.TRd_head, self.TRd_tail, write_port)
+        # print('prev head, prev tail, row no:', self.TRd_head, self.TRd_tail, write_port)
 
         # if instruction == 'overwrite' or instruction == 'Read':
         if abs(self.TRd_head - row_number) < abs(self.TRd_tail - row_number) and self.TRd_head <= (self.memory_size - self.TRd_size):
@@ -48,7 +48,6 @@ class DBC():
             if self.TRd_head > row_number:
                 diff = self.TRd_head - row_number
                 self.TRd_head = self.TRd_head - diff
-                print('diff', diff)
                 self.TRd_tail = self.TRd_head + DBC.TRd_size - 1
                 ## performance parameters
                 perform_param['write'] += 0
@@ -164,7 +163,6 @@ class DBC():
         elif abs(self.TRd_head - row_number) == abs(self.TRd_tail - row_number):
             # if equal distance from AP0 and AP1 choose AP0
             diff = self.TRd_head - row_number
-            print('diff', diff)
             # Cycles for shift
             cycles = + (diff * 2)
             self.TRd_head = self.TRd_head - diff
@@ -373,7 +371,7 @@ class DBC():
             if command[-1] == 'AP0':
                 for i in range(0, n):
                     DBC.Local_row_buffer[i] = '0'
-                print(local_buffer_count, self.bit_length)
+
                 for i in range(0, self.bit_length-n):
                     DBC.Local_row_buffer[local_buffer_count] = self.memory[self.TRd_head][i]
                     local_buffer_count += 1

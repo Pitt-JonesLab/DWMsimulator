@@ -4,7 +4,7 @@ import WriteData as wr
 from display import display
 
 
-TRd_size = 5
+TRd_size = 7
 # Initializing single Local Buffer for all DBC's
 Local_row_buffer = [0] * (512)
 
@@ -12,8 +12,7 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
 
     TRd_head = int(row_number)
     TRd_end_loc = TRd_head + TRd_size - 1
-    cycle = 0
-    energy = 0
+
     result = ''
     # Fill AP0 and AP1 with 0's
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos ):
@@ -23,28 +22,27 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
     # display aftre appending zeros
     # display(memory, 0, 'AP0')
 
-
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos - 2):
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos - 1):
         carry = carry_add(memory, TRd_head, i, i)
         # write carry at next nanowire at AP1
-        memory[TRd_end_loc][i+1] = carry
+        memory[TRd_end_loc][i + 1] = carry
+
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos - 2):
+
         carry_prime = carry_prime_add(memory, TRd_head, i, i)
         # write carry prime at next to next nanowire at AP0
         memory[TRd_head][i + 2] = carry_prime
 
-    print('after carry and carry prime')
-    display(memory, 0, 'AP0')
 
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos - 2):
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
         sum = xor_add(memory, TRd_head, i, i)
 
         # write sum at the same nanowire at AP0
         memory[TRd_head][i] = sum
         result += sum
 
-    print('after XOR')
-    display(memory, 0, 'AP0')
-
+    # display(memory, TRd_head, 'AP0')
+    # print(result)
     # Converting binary data at TRd head to Hex for verification/visualization
     count = 0
     s = ''
@@ -58,7 +56,6 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
             hex_num += (string_hex_num)
             s = ''
             count = 0
-
 
     return hex_num
 
@@ -68,60 +65,53 @@ def multiply(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
 
     TRd_head = int(row_number)
     TRd_end_loc = TRd_head + TRd_size - 1
-    cycle = 0
-    energy = 0
-    result = []
+    display(memory, TRd_head, 'AP0')
 
-    # read AP0 where B is stored
-    B = memory[TRd_head][:nanowire_num_end_pos]
+    result = ''
+    carry = ''
+    carry_prime = ''
+    sum = ''
+    # call carry, carry prime and xor till three operand
+    l = nanowire_num_end_pos
+    while (TRd_size - 2)  < (l - TRd_head):
 
+        for i in range(0, 511):
+            carry += carry_add(memory, TRd_head, i, i)
+            carry_prime += carry_prime_add(memory, TRd_head, i, i)
+            sum += xor_add(memory, TRd_head, i, i)
 
-    # calculate the length of B
+        # write c, c' and sum
+        for i in range(0, 510):
+            memory[l][i + 1] = carry[i]
+        for i in range(0, 509):
+            memory[l + 1][i + 2] = carry_prime[i]
+        for i in range(0, 511):
+            memory[l + 2][i] = sum[i]
 
-    # read from $480 (DBC 15) where A is stored
+        display(memory, TRd_head, 'AP0')
 
-    dbc = nanowire_num_start_pos
-    A = dbc.controller(row_number, 'read', 0, 8)
-    A = memory[TRd_end_loc][:nanowire_num_end_pos]
+        TRd_head += TRd_size
+        l += 3
 
-    # # make (len B) copies of AP0 (X)
-    # shifted_A = shifted_by_one(A,nanowire_num_end_pos)
+    # Call ADD function
+    result = addition(memory, TRd_head - 1, nanowire_num_start_pos, 16)
+    # print('result', result)
 
-    # for i, l in enumerate(shifted_A):
-    #     for j in range(0, ):
-    #         if B[i] != '0':
-    #             result.append(l)
+    # # Converting binary data at TRd head to Hex for verification/visualization
+    # count = 0
+    # s = ''
+    # hex_num = '0x'
+    # for i in range(0, len(result)):
+    #     s += str(result[i])
+    #     count += 1
+    #     if count == 4:
+    #         num = int(s, 2)
+    #         string_hex_num = format(num, 'x')
+    #         hex_num += (string_hex_num)
+    #         s = ''
+    #         count = 0
 
-    # for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
-    #     c = 0
-    #     for j in range(TRd_head, TRd_end_loc + 1):
-    #
-    #         if memory[j][i] == '1':
-    # xor, carry, carry_prime
-    xor = logicop.Xor(result, 0, 0,nanowire_num_end_pos)
-    carry = logicop.carry(result, 0, 0,nanowire_num_end_pos)
-    carry_prime = logicop.carry_prime(result, 0, 0,nanowire_num_end_pos)
-    m = [xor,carry,carry_prime]
-    addition(m, 0, 0, nanowire_num_end_pos)
-
-
-
-
-    # Converting binary data at TRd head to Hex for verification/visualization
-    count = 0
-    s = ''
-    hex_num = '0x'
-    for i in range(0, len(result)):
-        s += str(result[i])
-        count += 1
-        if count == 4:
-            num = int(s, 2)
-            string_hex_num = format(num, 'x')
-            hex_num += (string_hex_num)
-            s = ''
-            count = 0
-
-    return 1, 1, hex_num
+    return result
 
 def xor_add(memory, row_number, nanowire_num_start_pos,nanowire_num_end_pos):
     TRd_head = int(row_number)

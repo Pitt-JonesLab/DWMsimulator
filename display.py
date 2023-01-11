@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-TRd_size = 5
+TRd_size = 7
 def display(memory,row_number, s):
     TRd_pos = (s)
     nanowire_num_start_pos = 0
