@@ -4,7 +4,7 @@ import WriteData as wr
 from display import display
 
 
-TRd_size = 7
+TRd_size = 5
 # Initializing single Local Buffer for all DBC's
 Local_row_buffer = [0] * (512)
 

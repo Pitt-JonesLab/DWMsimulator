@@ -636,8 +636,8 @@ class DBC():
             ## performance parameters
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
-            perform_param['read'] += 1
-            perform_param['TR_reads'] += 3 - 1/nanowire_num_end_pos - 2/nanowire_num_end_pos
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
 
@@ -650,9 +650,15 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += 3 - 1/nanowire_num_end_pos - 2/nanowire_num_end_pos
+            perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
             perform_param['cpu_dma'] += 0
+            # perform_param['write'] += 33
+            # perform_param['TR_writes'] += 7
+            # perform_param['read'] += 22
+            # perform_param['TR_reads'] += 11
+            # perform_param['shift'] += 24
+            # perform_param['cpu_dma'] += 0
 
             return perform_param, Local_buffer
 

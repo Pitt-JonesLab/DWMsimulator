@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-TRd_size = 7
+TRd_size = 5
 def display(memory,row_number, s):
     TRd_pos = (s)
     nanowire_num_start_pos = 0
@@ -73,7 +73,8 @@ def display(memory,row_number, s):
 
                 s = ''
                 count = 0
-
+        # for j in range(44 + 1, nanowire_num_end_pos):
+        #     hex_num += ('-')
 
         # Add to table
         if i == TRd_head:
