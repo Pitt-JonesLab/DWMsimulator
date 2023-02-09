@@ -1,0 +1,32 @@
+# we will use the last DBC $480 to $511 to shift the 'A' operand
+CPIM $0 0xff STORE 512 0 //a
+CPIM $480 0x1f STORE 512 0 //w
+CPIM $32 $0 MULT 8 0 //a*w
+CPIM $0 0x0f STORE 512 0 //b
+CPIM $480 0xf1 STORE 512 0 //y
+CPIM $33 $0 MULT 8 0 //b*y
+CPIM $64 $32 ADD 8 0 //a*w + b*y
+
+CPIM $0 0xff STORE 512 0 //a
+CPIM $480 0x11 STORE 512 0 //x
+CPIM $32 $0 MULT 8 0 //a*x
+CPIM $0 0x0f STORE 512 0 //b
+CPIM $480 0x01 STORE 512 0 //z
+CPIM $33 $0 MULT 8 0 //b*z
+CPIM $65 $32 ADD 8 0 //a*x + b*z
+
+CPIM $0 0xab STORE 512 0 //c
+CPIM $480 0x1f STORE 512 0 //w
+CPIM $32 $0 MULT 8 0 //a*w
+CPIM $0 0x1a STORE 512 0 //d
+CPIM $480 0xf1 STORE 512 0 //y
+CPIM $33 $0 MULT 8 0 //b*y
+CPIM $66 $32 ADD 8 0 //c*w + d*y
+
+CPIM $0 0xff STORE 512 0 //c
+CPIM $480 0x1f STORE 512 0 //x
+CPIM $32 $0 MULT 8 0 //c*x
+CPIM $0 0x0f STORE 512 0 //d
+CPIM $480 0xf1 STORE 512 0 //z
+CPIM $33 $0 MULT 8 0 //d*z
+CPIM $67 $32 ADD 8 0 //c*x + d*z

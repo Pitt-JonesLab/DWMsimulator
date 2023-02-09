@@ -1,0 +1,36 @@
+# Add FF for AND
+CPIM $97 0xFF STORE 512 0
+CPIM $98 0xFF STORE 512 0
+CPIM $99 0xFF STORE 512 0
+
+# Offloading kernel (Let's try not using DMA)
+# Look at DRAM references
+
+# Storing Bitmap Indices
+CPIM $12 0x2D STORE 512 0
+CPIM $13 0x81 STORE 512 0
+CPIM $14 0x22 STORE 512 0
+CPIM $15 0x08 STORE 512 0
+CPIM $16 0x10 STORE 512 0
+CPIM $17 0x40 STORE 512 0
+CPIM $18 0x04 STORE 512 0
+
+# Assumming <= 512 people, DBC3($96) filled with 1's between heads, TRD Distance = 5, Indices stored $12 to $18
+# Create desired search condition (Example: How many males have logged in within the past two weeks?)
+
+# Step 1 & 2: Copy conditions and OR them together
+CPIM $32 $13 COPY 512 0
+CPIM $32 $14 COPY 512 1
+CPIM $32 $15 COPY 512 1
+CPIM $96 $32 OR 512 0
+
+# Step 3 & 4: NOT the Gender condition for males, AND with the previous result
+CPIM $64 $12 COPY 512 0
+CPIM $100 $64 NOR 512 0
+CPIM $64 $96 AND 512 0
+
+# Result can be sent elsewhere for counting
+# Timing Results (10 DMAs, 4 reads, 3 transverse reads, 15 writes, 2 TRD transverse writes): 
+# Stores: 10 DMAs, 10 Writes
+# Copy: 4 Reads, 2 Writes, 2 TRD Transverse Writes
+# OPs: 3 Transverse Reads, 3 Writes
