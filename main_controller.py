@@ -14,7 +14,7 @@ import ArithmaticOperation as ao
 
 
 class DBC():
-    TRd_size = 5
+    TRd_size = 7
     # Initializing single Local Buffer for all DBC's
     Local_row_buffer = [0] * (512)
 
@@ -35,8 +35,9 @@ class DBC():
         nanowire_num_start_pos = int(nanowire_num_start_pos)
         nanowire_num_end_pos = int(nanowire_num_end_pos)
 
+
         perform_param = dict()
-        keys = ['write', 'TR_writes', 'read', 'TR_reads', 'shift', 'cpu_dma']
+        keys = ['write', 'TR_writes', 'read', 'TR_reads', 'shift', 'STORE']
         perform_param = {key: 0 for key in keys}
 
         row_number = int(write_port)
@@ -55,7 +56,7 @@ class DBC():
                 perform_param['read'] += 0
                 perform_param['TR_reads'] += 0
                 perform_param['shift'] += 1 * diff
-                perform_param['cpu_dma'] += 0
+                perform_param['STORE'] += 0
 
 
 
@@ -69,7 +70,7 @@ class DBC():
                 perform_param['read'] += 0
                 perform_param['TR_reads'] += 0
                 perform_param['shift'] += 1 * diff
-                perform_param['cpu_dma'] += 0
+                perform_param['STORE'] += 0
 
             else:
                 self.TRd_head = row_number
@@ -80,7 +81,7 @@ class DBC():
                 perform_param['read'] += 0
                 perform_param['TR_reads'] += 0
                 perform_param['shift'] += 0
-                perform_param['cpu_dma'] += 0
+                perform_param['STORE'] += 0
 
 
             self.TRd_head = int(self.TRd_head)
@@ -115,7 +116,7 @@ class DBC():
                 perform_param['read'] += 0
                 perform_param['TR_reads'] += 0
                 perform_param['shift'] += 1 * diff
-                perform_param['cpu_dma'] += 0
+                perform_param['STORE'] += 0
 
             elif self.TRd_tail < row_number:
                 diff = row_number - self.TRd_tail
@@ -128,7 +129,7 @@ class DBC():
                 perform_param['read'] += 0
                 perform_param['TR_reads'] += 0
                 perform_param['shift'] += 1 * diff
-                perform_param['cpu_dma'] += 0
+                perform_param['STORE'] += 0
 
             else:
                 self.TRd_tail = row_number
@@ -140,7 +141,7 @@ class DBC():
                 perform_param['read'] += 0
                 perform_param['TR_reads'] += 0
                 perform_param['shift'] += 0
-                perform_param['cpu_dma'] += 0
+                perform_param['STORE'] += 0
 
 
             self.TRd_head = int(self.TRd_head)
@@ -174,7 +175,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 1 * diff
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
 
             # Call read or write at AP0
@@ -194,6 +195,7 @@ class DBC():
         if data_hex != None:
             # Convert hex data to bin
             data_hex_size = len(data_hex) * 4
+
             data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
 
             for i in range(0, len(data_bin)):
@@ -210,7 +212,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param
 
@@ -225,12 +227,13 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param
 
         if (instruction == 'W AP0' ):
             # overwrite at left side (TRd start position)
+
             adt.overwrite_zero(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
             perform_param['write'] += 1
@@ -238,12 +241,13 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param
 
         elif (instruction == 'W AP1'):
             # overwrite at right side(TRd end position)
+            # print('overwrite', self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             adt.overwrite_one(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
             perform_param['write'] += 1
@@ -251,7 +255,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param
 
@@ -265,7 +269,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param
 
@@ -278,7 +282,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param
 
@@ -291,7 +295,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param
 
@@ -304,7 +308,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param
 
@@ -348,7 +352,7 @@ class DBC():
                     s = ''
                     count = 0
 
-            print("local Buffer :", (hex_num))
+            # print("local Buffer :", (hex_num))
 
             ## performance parameters
             perform_param['write'] += 0
@@ -356,7 +360,7 @@ class DBC():
             perform_param['read'] += 1
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, hex_num
 
@@ -397,7 +401,7 @@ class DBC():
                     hex_num += (string_hex_num)
                     s = ''
                     count = 0
-            print("local Buffer :", hex_num)
+            # print("local Buffer :", hex_num)
 
             ## performance parameters
             perform_param['write'] += 0
@@ -405,7 +409,7 @@ class DBC():
             perform_param['read'] += 1
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, hex_num
 
@@ -447,7 +451,7 @@ class DBC():
             perform_param['read'] += 1
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
 
             return perform_param, hex_num
@@ -478,7 +482,7 @@ class DBC():
             perform_param['read'] += 1
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
 
 
@@ -494,7 +498,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 1
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -507,7 +511,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 1
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -520,7 +524,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -533,7 +537,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -547,7 +551,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -560,7 +564,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -573,7 +577,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -586,7 +590,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -599,7 +603,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -612,7 +616,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -625,7 +629,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += (1)
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -639,7 +643,7 @@ class DBC():
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
             perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 
@@ -647,18 +651,18 @@ class DBC():
             Local_buffer = ao.multiply(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
             ## performance parameters
-            perform_param['write'] += 0
-            perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += 0
-            perform_param['shift'] += 0
-            perform_param['cpu_dma'] += 0
+            perform_param['write'] += 8+4+15
+            perform_param['TR_writes'] += 6
+            perform_param['read'] += 8+7
+            perform_param['TR_reads'] += 3+8
+            perform_param['shift'] += 8+9
+            perform_param['STORE'] += 0
             # perform_param['write'] += 33
             # perform_param['TR_writes'] += 7
             # perform_param['read'] += 22
             # perform_param['TR_reads'] += 11
             # perform_param['shift'] += 24
-            # perform_param['cpu_dma'] += 0
+            # perform_param['STORE'] += 0
 
             return perform_param, Local_buffer
 

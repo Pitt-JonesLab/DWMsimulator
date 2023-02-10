@@ -4,7 +4,7 @@ import WriteData as wr
 from display import display
 
 
-TRd_size = 5
+TRd_size = 7
 # Initializing single Local Buffer for all DBC's
 Local_row_buffer = [0] * (512)
 
@@ -65,7 +65,7 @@ def multiply(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
 
     TRd_head = int(row_number)
     TRd_end_loc = TRd_head + TRd_size - 1
-    display(memory, TRd_head, 'AP0')
+    # display(memory, TRd_head, 'AP0')
 
     result = ''
     carry = ''
@@ -88,7 +88,7 @@ def multiply(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
         for i in range(0, 511):
             memory[l + 2][i] = sum[i]
 
-        display(memory, TRd_head, 'AP0')
+        # display(memory, TRd_head, 'AP0')
 
         TRd_head += TRd_size
         l += 3

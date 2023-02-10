@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-TRd_size = 5
+TRd_size = 7
 def display(memory,row_number, s):
     TRd_pos = (s)
     nanowire_num_start_pos = 0
@@ -57,7 +57,7 @@ def display(memory,row_number, s):
     # print(start, stop+1,TRd_pos)
 
     # Converting bin to hex
-    for i in range(start, stop+1):
+    for i in range(start, stop+1 ):
         t = []
         count = 0
         s = ''
