@@ -638,10 +638,10 @@ class DBC():
             Local_buffer = ao.addition(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
             ## performance parameters
-            perform_param['write'] += 0
+            perform_param['write'] += 15
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += 0
+            perform_param['TR_reads'] += 8
             perform_param['shift'] += 0
             perform_param['STORE'] += 0
 
