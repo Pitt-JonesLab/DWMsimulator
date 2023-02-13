@@ -1,6 +1,6 @@
 from display import display
 
-TRd_size = 7
+TRd_size = 5
 
 def And(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
 

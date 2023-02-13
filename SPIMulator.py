@@ -103,12 +103,11 @@ def write_type(dbcs, row_number_destination, write_type, nanowire_num_start_pos,
 perform_param = dict()
 keys = ['write','TR_writes', 'read', 'TR_reads', 'shift', 'STORE']
 perform_param = {key: 0 for key in keys}
-
 # Creating 16 DBC objects
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of text file
-instruction_file = open("Instruction Sets/KeyGen.txt", "r")
+instruction_file = open("C:/Users/flamm/Documents/PhD Work/DRAM Simulator/AES1.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
@@ -356,7 +355,7 @@ for line in lines:
 
 
 
-        elif  instruction_line[0] == 'Subbyte':
+        elif  instruction_line[0] == 'SubByte':
             # read bits
             read_bits = ''
             for i in range(2,int(instruction_line[3]) + 2, 2):
@@ -371,7 +370,7 @@ for line in lines:
             # mask data_hex with zeros:
             N = 128 - len(read_bits)
             read_bits = read_bits.ljust(N + len(read_bits), '0')
-            param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[4], 0, int(instruction_line[3]), read_bits)
+            param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[4], 0, int(instruction_line[3])*4, read_bits)
 
             perform_param['write'] += param_table['write']
             perform_param['TR_writes'] += param_table['TR_writes']
