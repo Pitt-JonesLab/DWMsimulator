@@ -1,5 +1,37 @@
 # DWMsimulator
-pycharm DWM simulator
+## DWM simulatorwas written in python 3.8
+
+# Intro to DWM:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 A ‘.txt’ file is loaded into the tool and the tool can translate the text file into PIM readable instructions. The
 tool can issue instructions sequentially from a ‘.txt’ file given by the user.
