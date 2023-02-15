@@ -1,7 +1,7 @@
 # DWMsimulator
-## DWM simulatorwas written in python 3.8
+#### DWM simulatorwas written in python 3.8
 
-# Intro to DWM:
+## Intro to DWM:
 
 
 
