@@ -1,5 +1,5 @@
 # DWMsimulator
-#### Domain Wall Memory (Processing in memory - PIM) simulator **SPIMulator**.
+#### Processing in memory (PIM architechture ) for Domain Wall Memory simulator **SPIMulator**.
 
 
 ## Project environment and IDE:
