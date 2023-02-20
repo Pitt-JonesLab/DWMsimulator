@@ -3,8 +3,8 @@
 
 
 
-### Project environment and IDE:
-The SPIMulator was written in python 3.8
+### Project Setup:
+* The SPIMulator was written in python 3.8.
 
 
 
