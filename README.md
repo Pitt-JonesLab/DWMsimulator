@@ -1,5 +1,6 @@
 # DWMsimulator
-## Processing in memory (PIM architechture ) for Domain Wall Memory simulator {**SPIMulator**}.
+## A Spintronic Processing-In-Memory Simulator for Racetracks {**SPIMulator**}.
+
 
 
 ## Project environment and IDE:
