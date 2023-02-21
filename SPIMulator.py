@@ -109,7 +109,7 @@ perform_param = {key: 0 for key in keys}
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of text file
-instruction_file = open("Instruction Sets/AES1.txt", "r")
+instruction_file = open("Instruction Sets/AES.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
@@ -360,7 +360,7 @@ for line in lines:
 
 
 
-        elif  instruction_line[0] == 'Subbyte':
+        elif  instruction_line[0] == 'SubByte':
             # read bits
             read_bits = ''
             for i in range(2,int(instruction_line[3]) + 2, 2):
