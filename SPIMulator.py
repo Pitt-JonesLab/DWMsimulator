@@ -369,7 +369,7 @@ for line in lines:
                 sbox_val = SB.subBytes(dec)
                 # convert to decimal number
                 hex_data = hex(sbox_val)
-                read_bits += (str(hex_data[2:]))
+                read_bits += (str(hex_data[2:]).zfill(2))
 
 
             # mask data_hex with zeros:
