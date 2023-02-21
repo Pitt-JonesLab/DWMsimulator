@@ -140,8 +140,8 @@ $32 $0 carryprime 511 0 " which issues a carryprime operation at source address 
 overwrites at destination address at $0. The output from these instruction can be written in
 any way according to the last ’3 bit’ of the instruction i.e (0-6).
 
-**iii) ‘ADD’** represents the arithmetic ’addition ’ operation 𝐴 + 𝐵.We will show an example of an
-addition operation for five operands in Fig. 5 for TRd = 7. It is important to note that we
+**iii) ‘ADD’** represents the arithmetic ’addition ’ operation 𝐴 + 𝐵. We will show an example of an
+addition operation for five operands for TRd = 7. It is important to note that we
 can perform addition for (𝑇𝑅𝑑 − 2) bits. Therefore, for our example, we can perform 5-bit
 addition for TRd = 7. In step 1, a TR of 𝑑𝑤𝑚0 (first nanowire) is conducted. 𝑆0, which is
 XOR of 𝑎0...𝑒0, (5-bit number) is computed by the PIM block, which is the blue bits between
@@ -157,8 +157,14 @@ is reached. In the general case, for step k+1 (i.e., 𝑑𝑤𝑚𝑘 ), TR is c
 (𝑘 − 2),
 𝑎𝑘 ...𝑒𝑘 , 𝐶(𝑘 − 1) with 𝑆𝑘 written to 𝑝𝑜𝑟𝑡𝐿 of 𝑑𝑤𝑚𝑘 , 𝐶𝑘 written to 𝑝𝑜𝑟𝑡𝑅 of 𝑑𝑤𝑚(𝑘 + 1) and
 𝐶′
-𝑘 written to 𝑝𝑜𝑟𝑡𝐿 of 𝑑𝑤𝑚(𝑘 + 2). Figure 5 is an example of addition for (TRD - 2) numbers
+𝑘 written to 𝑝𝑜𝑟𝑡𝐿 of 𝑑𝑤𝑚(𝑘 + 2). Figure below is an example of addition for (TRD - 2) numbers
 of operands placed in-between the Access Ports.
+
+![Screen Shot 2023-02-21 at 11 37 50 AM](https://user-images.githubusercontent.com/41592723/220405600-e8425e0a-99d6-43eb-a039-e8fe4a170916.png)
+
+
+
+
 
 **iv) ‘MULT’** represents the arithmetic ‘multiplication’ operation 𝐴 ∗ 𝐵. A foundational method
 to compute 𝐴 ∗ 𝐵 is to sum A B times; e.g., for 𝐵 = 3, 𝐴 ∗ 3 can be computed as 𝐴 + 𝐴 + 𝐴.
