@@ -11,10 +11,10 @@ import numpy as np
 import WriteData as adt
 import LogicOperation as logicop
 import ArithmaticOperation as ao
-
+import config as config
 
 class DBC():
-    TRd_size = 7
+    TRd_size = config.TRd_size
     # Initializing single Local Buffer for all DBC's
     Local_row_buffer = [0] * (512)
 

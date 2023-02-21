@@ -1,6 +1,7 @@
 from display import display
+import config as config
 
-TRd_size = 7
+TRd_size = config.TRd_size
 
 def And(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
 

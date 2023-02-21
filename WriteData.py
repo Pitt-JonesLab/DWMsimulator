@@ -1,7 +1,8 @@
 ''' This file write's data to DWM Memory depending on the write instrucion'''
 from display import display
+import config as config
 
-TRd_size = 5
+TRd_size = config.TRd_size
 
 def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, Local_row_buffer):
     # Instruction write 2

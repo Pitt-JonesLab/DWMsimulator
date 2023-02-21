@@ -2,9 +2,9 @@
 import LogicOperation as logicop
 import WriteData as wr
 from display import display
+import config as config
 
-
-TRd_size = 7
+TRd_size = config.TRd_size
 # Initializing single Local Buffer for all DBC's
 Local_row_buffer = [0] * (512)
 

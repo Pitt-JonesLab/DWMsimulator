@@ -104,11 +104,12 @@ perform_param = dict()
 keys = ['write','TR_writes', 'read', 'TR_reads', 'shift', 'STORE']
 perform_param = {key: 0 for key in keys}
 
+
 # Creating 16 DBC objects
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of text file
-instruction_file = open("Instruction Sets/KeyGen.txt", "r")
+instruction_file = open("Instruction Sets/AES1.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
@@ -198,8 +199,11 @@ for line in lines:
                 perform_param['STORE'] += (param_table['STORE'] + 1)
 
 
-            elif instruction_line[3] == 'SHL' or instruction_line[3] == 'SHR':
-                instruction = instruction_line[3] + ' ' + instruction_line[4]
+            elif 'SHL' in instruction_line[3] or 'SHR' in instruction_line[3]:
+                i = instruction_line[3]
+                instruction = ''
+                instruction = i[:3] + ' ' + i[3:]
+                print(instruction)
                 # call operations
                 param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, 511)
                 data_hex = data[2:]
