@@ -149,7 +149,7 @@ the AP 0 and AP 1 access ports. Simultaneously, carry, 𝐶0, is computed and se
 right to the driver (AP 1) for 𝑑𝑤𝑚1 (second nanowire) shown in orange and carry prime
 𝐶′
 0 is sent to the left of the driver AP 0 for 𝑑𝑤𝑚2 (3rd nanowire), shown in green in fig.
-5. In step 2, a similar set of steps occurs, except the operations include 𝐶0 in addition to
+below. In step 2, a similar set of steps occurs, except the operations include 𝐶0 in addition to
 𝑎1...𝑒1. Then in step 3, TR is conducted over 𝐶′
 0 , 𝑎2...𝑒2,𝐶1, which is seven total elements.
 We will continue to compute 𝑆, 𝐶 and 𝐶′ for every nanowire till the 3rd last nanowire (509)
@@ -176,9 +176,9 @@ summing to compute 25𝐴, and so on, but this clearly scales poorly. One method
 this process is to shift the copies of A, so as to quickly achieve the precise partial products
 that, when summed, produce the desired product. We have reserved our last DBC $15 for
 the purpose of shifting copies of A and executing carry, carry prime and add operations on
-the shifted copies of A. This is the reduction process, as shown in figure 6. One example of
-‘multiplication’ is shown in fig. 7. Here, we multiply 0xfe and 0x1f to generate 0x1588.
+the shifted copies of A. This is the reduction process, as shown in figure below. 
 
+![Screen Shot 2023-02-21 at 11 41 36 AM](https://user-images.githubusercontent.com/41592723/220406554-b50905e7-f7a4-43d9-a95f-273c5861d014.png)
 
 
 
