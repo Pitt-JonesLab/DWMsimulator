@@ -17,9 +17,9 @@ The general format is "CPIM DST SRC OP BLOCKSIZE WRITE_OPERATION".
 
 Below is the list of operations "OP":
 
-A) Write operations :
+### A) Write operations :
 
-i) Write: ‘0’ is one of the types of write (‘write_op’) operation that will overwrite at the
+## i) Write: ‘0’ is one of the types of write (‘write_op’) operation that will overwrite at the
 destination ‘dst’ after the TRd head or tail aligns with the ‘dst’ address. The data from the
 local buffer is overwrites the data at the ‘dst’ address and thus any previous information at
 ‘dst’ will be lost. This instruction is to be used adjoined with other operational instructions such as ‘AND’, ‘SHL’, ADD etc. The result after performing any operations at ‘src’ is stored
@@ -54,7 +54,7 @@ and pushes the data towards the bottom of the track below the TRd. This means th
 data below ‘AP 1’ will be shifted downwards. In doing so only, the data at address 32 is
 deleted.
 
-B) Basic Memory Operations :
+### B) Basic Memory Operations :
 
 i) ‘STORE’: When issued with this instruction, the "data" is loaded from the CPU to the local
 buffer and then is written according to the write_op (0 - 6) after the TRd AP 0 or AP 1 aligns
@@ -105,7 +105,7 @@ instruction is " read $12 AP0 ", which will align the access port AP 0 with sour
 $12 and then copies the data into the local buffer. These instructions can be helpful when
 data is required to be moved out of the Domain Wall Memory to the CPU. 
 
-C) Logical and Arithmetic Operations :
+### C) Logical and Arithmetic Operations :
 
 i) {‘AND’, ‘OR’, ‘XOR’, ‘XNOR’, ‘NAND’, ‘NOR’, ‘NOT’} represents the logical operation ‘and’,
 ‘or’, ‘xor’, ‘xnor’, ‘nand’, ‘nor’, ‘not’ individually when issued with the cpim instruction.
