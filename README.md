@@ -194,7 +194,29 @@ We need 10 rounds of the following steps for a key size of 128 bits:
 * Mix Column
 * Add Round key
 
+### Round 0 Operations:
+
 ### Round 1 Operations:
+
+### Round 2 Operations:
+
+### Round 3 Operations:
+
+### Round 4 Operations:
+
+### Round 5 Operations:
+
+### Round 6 Operations:
+
+### Round 7 Operations:
+
+### Round 8 Operations:
+
+### Round 9 Operations:
+
+### Round 10 Operations:
+
+### Cipher Text:
 
 
 
