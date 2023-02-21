@@ -183,8 +183,11 @@ the shifted copies of A. This is the reduction process, as shown in figure below
 
 ## AES Results:
 In the example below we will show an end to end AES encryption for the following text and key:
+
 **Text** = ""
+
 **Key** = ""
+
 We need 10 rounds of the following steps for a key size of 128 bits:
 * Sub Byte
 * Shift Row
