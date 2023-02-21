@@ -194,8 +194,16 @@ We need 10 rounds of the following steps for a key size of 128 bits:
 * Mix Column
 * Add Round key
 
-### Round 0 Operations:
-![image3](https://user-images.githubusercontent.com/41592723/220475137-5398ac5d-1ffd-445a-8a87-112665cadfcb.png)
+**For the first round operation the following are the results of:**
+* **SubByte:**
+![image1](https://user-images.githubusercontent.com/41592723/220476891-f3af6d4e-f387-4f69-b61d-e9b6adadd75e.png)
+
+* **Shift Row:**
+![image2](https://user-images.githubusercontent.com/41592723/220476869-8ae6378a-9d88-4fd6-bc12-392ef8c74119.png)
+
+* **Mix Column:**
+![image3](https://user-images.githubusercontent.com/41592723/220476859-3f12b31d-d680-4403-bc53-3068615a6d48.png)
+
 
 ### Round 1 Operations:
 ![image4](https://user-images.githubusercontent.com/41592723/220475117-8a2748e1-bd91-4c0a-9070-26ecfad94517.png)
