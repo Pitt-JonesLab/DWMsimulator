@@ -19,51 +19,59 @@ Below is the list of operations "OP":
 
 ### A) Write operations :
 
-## i) Write: ‘0’ is one of the types of write (‘write_op’) operation that will overwrite at the
+#### i) Write: ‘0’ 
+is one of the types of write (‘write_op’) operation that will overwrite at the
 destination ‘dst’ after the TRd head or tail aligns with the ‘dst’ address. The data from the
 local buffer is overwrites the data at the ‘dst’ address and thus any previous information at
 ‘dst’ will be lost. This instruction is to be used adjoined with other operational instructions such as ‘AND’, ‘SHL’, ADD etc. The result after performing any operations at ‘src’ is stored
 in the local buffer temporarily and then overwritten at ‘dst’ according to ’0’.
 
-ii) Transverse write at AP0: ‘1’ is a special type of write operation which represents transverse
+#### ii) Transverse write at AP0: ‘1’
+is a special type of write operation which represents transverse
 write at ‘AP 0’. This means that the data present within the TRd is shifted towards ‘AP
 1’ by one row and then the shifted data is written at ‘dst’ address. In doing so, the data at
 ‘AP 1’ will be lost. This instruction is issued when there is a need to shift place data while
 keeping the head at the same address or to clear out old data.
 
-iii) Transverse write at AP1: ‘2’ is a special type of write operation which represents transverse
+#### iii) Transverse write at AP1: ‘2’ 
+is a special type of write operation which represents transverse
 write at ‘AP 1’. Similar to the above command, except data is shifted into AP1 and the data
 at ‘AP 0’ is lost instead.
 
-iv) Transverse write at AP0 shift to bottom extremity: ‘3’ represents transverse write at ‘AP
+#### iv) Transverse write at AP0 shift to bottom extremity: ‘3’ 
+represents transverse write at ‘AP
 0’, but instead of deleting the data at ‘AP 1’, it pushes it down by one row beyond the
 TR distance. This means that the entire data starting from ‘AP 0’, is shifted down by one address until the end of the nanowire. In doing so only, the last row of data at the end of
 the nanowire (512) will be lost when issued with this command.
 
-v) Transverse write at AP1 shift to top extremity: ‘4’ represents transverse write at ‘AP 1’ and
+#### v) Transverse write at AP1 shift to top extremity: ‘4’
+represents transverse write at ‘AP 1’ and
 pushes the data at the track beyond the TR distance (above‘AP 0’) towards the top. This
 means all addresses beyond the TRd will be shifted up by one, with the top row being
 deleted entirely.
 
-vi) Transverse write at AP0 shift to top extremity: ‘5’ represents transverse write at ‘AP 0’ and
+#### vi) Transverse write at AP0 shift to top extremity: ‘5’ 
+represents transverse write at ‘AP 0’ and
 pushes the data up the track (above AP0) by one row. This will result in all data above ‘AP
 0’ being shifted up by one, and the data at address 0 is lost.
 
-vii) Transverse write at AP1 shift to bottom extremity: ‘6’ represents transverse write at ‘AP 1’
+#### vii) Transverse write at AP1 shift to bottom extremity: ‘6’ 
+represents transverse write at ‘AP 1’
 and pushes the data towards the bottom of the track below the TRd. This means that the
 data below ‘AP 1’ will be shifted downwards. In doing so only, the data at address 32 is
 deleted.
 
 ### B) Basic Memory Operations :
 
-i) ‘STORE’: When issued with this instruction, the "data" is loaded from the CPU to the local
+#### i) ‘STORE’:
+When issued with this instruction, the "data" is loaded from the CPU to the local
 buffer and then is written according to the write_op (0 - 6) after the TRd AP 0 or AP 1 aligns
 with the destination ’dst’ address. The peculiarity of this instruction is that the CPU data to
 be loaded can be supplied with the instruction. For example, " cpim $96 0xA24B791CEF6
 STORE 512 0 " implies that Data=0xA24B791CEF6 will be written at address $96 after the
 closest of the AP’s aligns with $96.
 
-ii) ‘COPY’: When issued with this instruction, the closest of the access points will first align
+#### ii) ‘COPY’: When issued with this instruction, the closest of the access points will first align
 with the source ’src’ address, and then the "data" is read from the source ’src’ address to
 the local buffer. The read data in the local buffer is then written according to the write_op
 (0 - 6) after the TRd AP 0 or AP 1 aligns with the destination ’dst’ address. The different
@@ -74,7 +82,8 @@ read and transferred to the local buffer. Then it will be written at ’dst’ a
 the closest of the AP’s aligns with the source address $12 and the destination address $96,
 respectively.
 
-iii) ‘SHL’ (logical shift left) represents the left shift of each bit at the ‘src’. This instruction
+#### iii) ‘SHL’ (logical shift left)
+represents the left shift of each bit at the ‘src’. This instruction
 comes in 3 forms: SHL1, SHL8, and SHL32. When issuing any of the above, SPIMulator’s
 first step is to read at ‘scr’ address by using the intelligent alignment of the TRd access port
 and then the number of shifts required. The data is then read to the row buffer and shifted
@@ -86,7 +95,8 @@ SHL1 512 0 " will first align either of the AP’s nearest to $0 and data will b
 1 bit. The shifted data will be in the local buffer before it is overwritten into the destination
 address $32.
 
-iv) ‘SHR’ (logical shift right) represents the right shift of each bit at the ‘src’ address. This
+#### iv) ‘SHR’ (logical shift right)
+represents the right shift of each bit at the ‘src’ address. This
 instruction comes in 3 forms: SHR1, SHR8, and SHR32. When issuing any of the above,
 SPIMulator’s first reads the ‘scr’ address by using the intelligent alignment of the TRd
 access port and then determines the amount to be shifted. The data is then read to the local
@@ -97,7 +107,8 @@ instruction is " cpim $32 $0 SHR8 512 0 " which will first align either of the A
 to $0 and data will be right shifted by 8 bits. The shifted data will be in the local buffer
 before it is overwritten into the destination address $32.
 
-v) ‘R AP0 and R AP1’ represents a simple read instruction at the src location after aligning
+#### v) ‘R AP0 and R AP1’ 
+represents a simple read instruction at the src location after aligning
 either ’AP 0’ or ’AP 1’ access port which is the head or tail of TRd with src. Although this
 instruction is not mentioned in the cpim instruction set the table, it is important to have
 these options so as to issue a simple read command when necessary. An example of this
@@ -107,7 +118,8 @@ data is required to be moved out of the Domain Wall Memory to the CPU.
 
 ### C) Logical and Arithmetic Operations :
 
-i) {‘AND’, ‘OR’, ‘XOR’, ‘XNOR’, ‘NAND’, ‘NOR’, ‘NOT’} represents the logical operation ‘and’,
+#### i) {‘AND’, ‘OR’, ‘XOR’, ‘XNOR’, ‘NAND’, ‘NOR’, ‘NOT’} 
+represents the logical operation ‘and’,
 ‘or’, ‘xor’, ‘xnor’, ‘nand’, ‘nor’, ‘not’ individually when issued with the cpim instruction.
 The operation takes place among the operands present between the TR distance after
 aligning the access port ’AP 0’ with the source address ‘src’. The result of the operation is
@@ -117,7 +129,8 @@ cpim $32 $0 and 511 0 " in which the ‘and’ operation is executed from source
 ‘src’ location to the TR size. The result is then stored in the local buffer and overwritten at
 the destination address ‘dst’.
 
-ii) ‘CARRY’ and ‘CARRYPRIME’ are a special instructions which are required for the ’ADD’
+#### ii) ‘CARRY’ and ‘CARRYPRIME’
+are a special instructions which are required for the ’ADD’
 and ‘MULT’ operations. They are normally not called by the users as they are not the part
 of the arithmetic operations. But users can still have the option to call these instructions in
 SPIMulator if they want to create custom functions that will require ’CARRY’ and ’CARRYPRIME’
@@ -130,7 +143,8 @@ $32 $0 carryprime 511 0 " which issues a carryprime operation at source address 
 overwrites at destination address at $0. The output from these instruction can be written in
 any way according to the last ’3 bit’ of the instruction i.e (0-6).
 
-iii) ‘ADD’ represents the arithmetic ’addition ’ operation 𝐴 + 𝐵.We will show an example of an
+#### iii) ‘ADD’
+represents the arithmetic ’addition ’ operation 𝐴 + 𝐵.We will show an example of an
 addition operation for five operands in Fig. 5 for TRd = 7. It is important to note that we
 can perform addition for (𝑇𝑅𝑑 − 2) bits. Therefore, for our example, we can perform 5-bit
 addition for TRd = 7. In step 1, a TR of 𝑑𝑤𝑚0 (first nanowire) is conducted. 𝑆0, which is
@@ -150,7 +164,8 @@ is reached. In the general case, for step k+1 (i.e., 𝑑𝑤𝑚𝑘 ), TR is c
 𝑘 written to 𝑝𝑜𝑟𝑡𝐿 of 𝑑𝑤𝑚(𝑘 + 2). Figure 5 is an example of addition for (TRD - 2) numbers
 of operands placed in-between the Access Ports.
 
-iv) ‘MULT’ represents the arithmetic ‘multiplication’ operation 𝐴 ∗ 𝐵. A foundational method
+#### iv) ‘MULT’
+represents the arithmetic ‘multiplication’ operation 𝐴 ∗ 𝐵. A foundational method
 to compute 𝐴 ∗ 𝐵 is to sum A B times; e.g., for 𝐵 = 3, 𝐴 ∗ 3 can be computed as 𝐴 + 𝐴 + 𝐴.
 Thus, we can perform multiplication by making several additions. Even with a 5 operand
 add, this method can quickly require many steps. Consider 9𝐴; this can be computed by
