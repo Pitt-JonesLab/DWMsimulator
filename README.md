@@ -15,7 +15,13 @@ For this project we have a memory with 32 tracks and 512 nanowires.
 ### Instruction sets
 The general format is "CPIM DST SRC OP BLOCKSIZE WRITE_OPERATION".
 
-Below is the list of operations "OP":
+DST is the destination address which can be from $0 to $511.
+
+SRC is the source address which can be from $0 to $511.
+
+BLOCKSIZE is the number of nanowires used which is 512 for our case.
+
+### Below is the list of "WRITE_OPERATION":
 
 ### A) Write operations :
 
@@ -53,6 +59,8 @@ pushes the data up the track (above AP0) by one row. This will result in all dat
 and pushes the data towards the bottom of the track below the TRd. This means that the
 data below ‘AP 1’ will be shifted downwards. In doing so only, the data at address 32 is
 deleted.
+
+### Below is the list of INSTRUCTIONS "OP":
 
 ### B) Basic Memory Operations :
 
