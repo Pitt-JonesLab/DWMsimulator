@@ -58,7 +58,7 @@ def display(memory,row_number, s):
     # print(start, stop+1,TRd_pos)
 
     # Converting bin to hex
-    for i in range(start-1, stop+1  ):
+    for i in range(start, stop+1  ):
         t = []
         count = 0
         s = ''

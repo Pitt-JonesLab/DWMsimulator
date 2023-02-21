@@ -109,7 +109,7 @@ perform_param = {key: 0 for key in keys}
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of text file
-instruction_file = open("C:/Users/flamm/Documents/PhD Work/DRAM Simulator/AES1_fixed.txt", "r")
+instruction_file = open("Instruction Sets/AES.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
