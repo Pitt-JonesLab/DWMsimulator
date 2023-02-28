@@ -17,7 +17,7 @@ def writezero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos, 
             memory[i][j] = memory[i-1][j]
 
     local_buff_start = nanowire_num_start_pos
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
 
         memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
