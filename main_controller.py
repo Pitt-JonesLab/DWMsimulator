@@ -46,7 +46,7 @@ class DBC():
         # print('prev head, prev tail, row no:', self.TRd_head, self.TRd_tail, write_port)
 
         # if instruction == 'overwrite' or instruction == 'Read':
-        if abs(self.TRd_head - row_number) < abs(self.TRd_tail - row_number) and self.TRd_head <= (self.memory_size - self.TRd_size):
+        if abs(self.TRd_head - row_number) < abs(self.TRd_tail - row_number) and row_number <= (self.memory_size - self.TRd_size):
             # Move TRd_head
             if self.TRd_head > row_number:
                 diff = self.TRd_head - row_number
@@ -105,7 +105,7 @@ class DBC():
 
 
 
-        elif abs(self.TRd_head - row_number) > abs(self.TRd_tail - row_number) and self.TRd_tail >= (self.TRd_size-1):
+        elif abs(self.TRd_head - row_number) > abs(self.TRd_tail - row_number) and row_number >= (self.TRd_size-1):
             # Move TRd_tail
             if self.TRd_tail > row_number:
                 diff = self.TRd_tail - row_number
@@ -155,7 +155,7 @@ class DBC():
                 instruction = str(instruction)
             elif instruction == 'Read':
                 instruction = 'R AP1'
-            elif 'SHL' or 'SHR' in instruction:
+            elif 'SHL' in instruction or 'SHR' in instruction:
                 instruction = instruction + ' ' + 'AP1'
             elif instruction == 'CARRY':
                 instruction = 'CARRY_AP1'
@@ -163,7 +163,7 @@ class DBC():
                 instruction = 'CARRYPRIME_AP1'
 
 
-        elif abs(self.TRd_head - row_number) == abs(self.TRd_tail - row_number):
+        elif abs(self.TRd_head - row_number) == abs(self.TRd_tail - row_number) and row_number <= (self.memory_size - self.TRd_size):
             # if equal distance from AP0 and AP1 choose AP0
             diff = self.TRd_head - row_number
             # Cycles for shift
@@ -185,13 +185,71 @@ class DBC():
                 instruction = 'W AP0'
             elif instruction == 'Read':
                 instruction = 'R AP0'
-            elif 'SHL' or 'SHR' in instruction:
+            elif 'SHL' in instruction or 'SHR' in instruction:
                 instruction = instruction + ' ' + 'AP0'
             elif instruction == 'CARRY':
                 instruction = 'CARRY_AP0'
             elif instruction == 'CARRYPRIME':
                 instruction = 'CARRYPRIME_AP0'
 
+        else:
+            if row_number < (self.TRd_size - 1):
+                # Move TRd_head
+                diff = self.TRd_head - row_number
+                self.TRd_head = self.TRd_head - diff
+                self.TRd_tail = self.TRd_head + DBC.TRd_size - 1
+                ## performance parameters
+                perform_param['write'] += 0
+                perform_param['TR_writes'] += 0
+                perform_param['read'] += 0
+                perform_param['TR_reads'] += 0
+                perform_param['shift'] += 1 * diff
+                perform_param['STORE'] += 0
+
+                self.TRd_head = int(self.TRd_head)
+                self.TRd_tail = int(self.TRd_tail)
+                # Call read or write at AP0
+                if instruction == 'overwrite':
+                    instruction = 'W AP0'
+                elif type(instruction) == int:
+                    instruction = str(instruction)
+                elif instruction == 'Read':
+                    instruction = 'R AP0'
+                elif 'SHL' in instruction or 'SHR' in instruction:
+                    instruction = instruction + ' ' + 'AP0'
+                elif instruction == 'CARRY':
+                    instruction = 'CARRY_AP0'
+                elif instruction == 'CARRYPRIME':
+                    instruction = 'CARRYPRIME_AP0'
+
+            elif row_number > (self.memory_size - self.TRd_size):
+                diff = self.TRd_tail - row_number
+                self.TRd_tail = self.TRd_tail - diff
+                self.TRd_head = self.TRd_tail - DBC.TRd_size + 1
+
+                ## performance parameters
+                perform_param['write'] += 0
+                perform_param['TR_writes'] += 0
+                perform_param['read'] += 0
+                perform_param['TR_reads'] += 0
+                perform_param['shift'] += 1 * diff
+                perform_param['STORE'] += 0
+
+                self.TRd_head = int(self.TRd_head)
+                self.TRd_tail = int(self.TRd_tail)
+                # Call read or write at AP1
+                if instruction == 'overwrite':
+                    instruction = 'W AP1'
+                elif type(instruction) == int:
+                    instruction = str(instruction)
+                elif instruction == 'Read':
+                    instruction = 'R AP1'
+                elif 'SHL' in instruction or 'SHR' in instruction:
+                    instruction = instruction + ' ' + 'AP1'
+                elif instruction == 'CARRY':
+                    instruction = 'CARRY_AP1'
+                elif instruction == 'CARRYPRIME':
+                    instruction = 'CARRYPRIME_AP1'
 
 
         if data_hex != None:

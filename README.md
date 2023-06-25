@@ -194,29 +194,53 @@ We need 10 rounds of the following steps for a key size of 128 bits:
 * Mix Column
 * Add Round key
 
-### Round 0 Operations:
+**For the first round operation the following are the results of:**
+* **SubByte:**
 
-### Round 1 Operations:
+![image1](https://user-images.githubusercontent.com/41592723/220476891-f3af6d4e-f387-4f69-b61d-e9b6adadd75e.png)
 
-### Round 2 Operations:
+* **Shift Row:**
 
-### Round 3 Operations:
+![image2](https://user-images.githubusercontent.com/41592723/220476869-8ae6378a-9d88-4fd6-bc12-392ef8c74119.png)
 
-### Round 4 Operations:
+* **Mix Column:**
 
-### Round 5 Operations:
+![image3](https://user-images.githubusercontent.com/41592723/220476859-3f12b31d-d680-4403-bc53-3068615a6d48.png)
 
-### Round 6 Operations:
 
-### Round 7 Operations:
+### These are the 10 keys generated after every round of operations:
+#### Round 1 Operations:
+![image4](https://user-images.githubusercontent.com/41592723/220475117-8a2748e1-bd91-4c0a-9070-26ecfad94517.png)
 
-### Round 8 Operations:
+#### Round 2 Operations:
+![image5](https://user-images.githubusercontent.com/41592723/220475101-d3d15261-1d04-4a24-80e4-db85bc5a5c7a.png)
 
-### Round 9 Operations:
+#### Round 3 Operations:
+![image6](https://user-images.githubusercontent.com/41592723/220475078-48f34cd6-b155-4b9d-8c3a-cf2530f1f0ae.png)
 
-### Round 10 Operations:
+#### Round 4 Operations:
+![image7](https://user-images.githubusercontent.com/41592723/220475030-b0371d55-8326-428d-bdab-867fe6f36ed3.png)
 
-### Cipher Text:
+#### Round 5 Operations:
+![image8](https://user-images.githubusercontent.com/41592723/220474983-54c46110-5013-4646-be70-eebe22e3b7d5.png)
+
+#### Round 6 Operations:
+![image9](https://user-images.githubusercontent.com/41592723/220474941-0fd10be8-cebc-4775-9489-73aa4521100e.png)
+
+#### Round 7 Operations:
+![image10](https://user-images.githubusercontent.com/41592723/220474901-1c6e7f05-704b-44a9-9c3a-0ee1d9762325.png)
+
+#### Round 8 Operations:
+![image11](https://user-images.githubusercontent.com/41592723/220474881-de335f16-86d9-4383-aba2-c0860ff32a01.png)
+
+#### Round 9 Operations:
+![image12](https://user-images.githubusercontent.com/41592723/220474792-e2f18fe4-0b4c-4904-a398-a4f68e3aa8c5.png)
+
+#### Round 10 Operations:
+![image13](https://user-images.githubusercontent.com/41592723/220474779-e28396fd-0725-443e-ac28-d2bfd88b71fc.png)
+
+#### Cipher Text:
+![image14](https://user-images.githubusercontent.com/41592723/220474766-a9efc7c8-e764-42a8-be55-2402ce3f4ea4.png)
 
 
 
