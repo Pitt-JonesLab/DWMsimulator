@@ -1,0 +1,2 @@
+CPIM $0 0xffffffffffffffff1 STORE 512 0 //a
+CPIM $0 $0 PC 512 0

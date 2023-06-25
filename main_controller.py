@@ -11,6 +11,7 @@ import numpy as np
 import WriteData as adt
 import LogicOperation as logicop
 import ArithmaticOperation as ao
+import shiftingfault as sftFlt
 import config as config
 
 class DBC():
@@ -20,6 +21,7 @@ class DBC():
 
     def __init__(self, ):
         '''This is a single instance of DBC'''
+        # self.fault = 3
         self.bit_length = 512
         self.memory_size = 32
         # self.padding_bits = int(self.memory_size / 2)
@@ -371,12 +373,13 @@ class DBC():
             command = (instruction.rsplit(' ', 2))
             n = int(command[1])
             local_buffer_count = n
+            print('lb', local_buffer_count)
 
             if command[-1] == 'AP0':
                 for i in range(0, n):
                     DBC.Local_row_buffer[i] = '0'
 
-                for i in range(0, self.bit_length-n):
+                for i in range(0, self.bit_length-n ):
                     DBC.Local_row_buffer[local_buffer_count] = self.memory[self.TRd_head][i]
                     local_buffer_count += 1
 
@@ -667,8 +670,32 @@ class DBC():
             return perform_param, Local_buffer
 
 
+        elif instruction == 'PC':
+            Local_buffer = sftFlt.parity_checking(self.memory, self.TRd_head,nanowire_num_start_pos, nanowire_num_end_pos)
+
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (1)
+            perform_param['shift'] += 0
+            perform_param['STORE'] += 0
+
+            return perform_param, Local_buffer
 
 
+        elif instruction == 'RS':
+            None
+        elif instruction == 'CS':
+            Local_buffer = sftFlt.corrective_shift(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+            ## performance parameters
+            perform_param['write'] += 0
+            perform_param['TR_writes'] += 0
+            perform_param['read'] += 0
+            perform_param['TR_reads'] += (0)
+            perform_param['shift'] += 0
+            perform_param['STORE'] += 0
 
 
+            return perform_param, Local_buffer
 

@@ -1,3 +1,4 @@
+# Step 1: Storing Bitmap Indices
 # Add FF for AND
 CPIM $97 0xFF STORE 512 0
 CPIM $98 0xFF STORE 512 0
@@ -7,14 +8,20 @@ CPIM $99 0xFF STORE 512 0
 # Look at DRAM references
 
 # Storing Bitmap Indices
-CPIM $12 0x2D STORE 512 0
-CPIM $13 0x81 STORE 512 0
+CPIM $12 0x2D STORE 512 0 //gender
+CPIM $13 0x81 STORE 512 0 // week 0
+
+# during simulation a shift fault occurs shifting from 0 x2D to 0 x22
+CPIM $97 $97 PC 512 0
+
+CPIM $12 $12 AND 512 0
 CPIM $14 0x22 STORE 512 0
 CPIM $15 0x08 STORE 512 0
 CPIM $16 0x10 STORE 512 0
 CPIM $17 0x40 STORE 512 0
 CPIM $18 0x04 STORE 512 0
-
+# Step 2: Copy to DBC 1 and OR the results
+# DBC 1 is reset to 0's to enable fewer operand ORs
 # Assumming <= 512 people, DBC3($96) filled with 1's between heads, TRD Distance = 5, Indices stored $12 to $18
 # Create desired search condition (Example: How many males have logged in within the past two weeks?)
 
