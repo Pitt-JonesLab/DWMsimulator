@@ -742,9 +742,9 @@ class DBC():
             return perform_param, Local_buffer
 
 
-        elif instruction == 'RS':
-            None
-        elif instruction == 'CS':
+        # elif instruction == 'RS':
+        #     None
+        elif instruction == 'CS' or instruction == 'RS':
             Local_buffer = sftFlt.corrective_shift(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
             ## performance parameters
             perform_param['write'] += 0
