@@ -9,7 +9,7 @@
 * SPIMulator.py is the main file where we read the intruction(.text) files. So, the instruction files needs to be initialized here every time we run a new algorithm.
 * config.py is the congiguration file where we can change the TRd size.
 
-<h1 style="color:red">### Getting Started:</h1>
+### Getting Started:
   1. Clone the SPIMulator repository to your local machine:
   2. Change to the SPIMulator directory:
   3. Create a virtual environment (recommended):
