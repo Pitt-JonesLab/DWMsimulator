@@ -16,24 +16,29 @@ import config as config
 
 class DBC():
     TRd_size = config.TRd_size
+    bit_length = config.bit_length
+    memory_size = config.memory_size
     # Initializing single Local Buffer for all DBC's
-    Local_row_buffer = [0] * (512)
+    Local_row_buffer = [0] * (bit_length)
+
 
     def __init__(self, ):
         '''This is a single instance of DBC'''
         # self.fault = 3
-        self.bit_length = 512
-        self.memory_size = 32
+        self.bit_length = DBC.bit_length #511
+        self.memory_size = DBC.memory_size #32
         # self.padding_bits = int(self.memory_size / 2)
         self.TRd_head = int(0)
         self.TRd_tail = int(self.TRd_head + DBC.TRd_size - 1)
         # self.memory = [[('0') for _ in range(self.memory_size * 2)]for _ in range(self.bit_length)]
 
-        self.memory = [[('0') for _ in range(self.bit_length)] for _ in range(self.memory_size)]
+        self.memory = [[('0') for _ in range(self.bit_length+1)] for _ in range(self.memory_size)]
 
 
 
-    def controller(self, write_port, instruction, nanowire_num_start_pos = 0, nanowire_num_end_pos = 511, data_hex = None):
+
+    def controller(self, write_port, instruction, nanowire_num_start_pos, nanowire_num_end_pos, data_hex = None):
+
         nanowire_num_start_pos = int(nanowire_num_start_pos)
         nanowire_num_end_pos = int(nanowire_num_end_pos)
 
@@ -255,9 +260,7 @@ class DBC():
         if data_hex != None:
             # Convert hex data to bin
             data_hex_size = len(data_hex) * 4
-
             data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
-
             for i in range(0, len(data_bin)):
                 DBC.Local_row_buffer[i] = data_bin[i]
 
@@ -296,7 +299,7 @@ class DBC():
 
             adt.overwrite_zero(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
-            perform_param['write'] += 1
+            perform_param['write'] += 32#1
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
@@ -310,7 +313,7 @@ class DBC():
             # print('overwrite', self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             adt.overwrite_one(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
-            perform_param['write'] += 1
+            perform_param['write'] += 32#1
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
             perform_param['TR_reads'] += 0
@@ -320,8 +323,6 @@ class DBC():
             return perform_param
 
         elif (instruction == '3'):
-            #TODO: fix write extremity write count
-            # write at (left) TRd start and shift data towards the left padding.
             adt.writezero_shiftLE(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
             perform_param['write'] += 0
@@ -431,7 +432,7 @@ class DBC():
             command = (instruction.rsplit(' ', 2))
             n = int(command[1])
             local_buffer_count = n
-            print('lb', local_buffer_count)
+
 
             if command[-1] == 'AP0':
                 for i in range(0, n):
@@ -487,7 +488,7 @@ class DBC():
 
         # Read instruction
         elif (instruction == 'R AP0' ):
-            for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
+            for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
                 DBC.Local_row_buffer[i] = self.memory[self.TRd_head][i]
 
             # converting to Hex
@@ -495,7 +496,7 @@ class DBC():
             s = ''
             hex_num = '0x'
 
-            for j in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+            for j in range(nanowire_num_start_pos, nanowire_num_end_pos ):
                 s += str(self.memory[self.TRd_head][j])
                 count += 1
                 if count == 4:
@@ -518,7 +519,7 @@ class DBC():
             return perform_param, hex_num
 
         elif (instruction == 'R AP1'):
-            for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+            for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
                 DBC.Local_row_buffer[i] = self.memory[self.TRd_tail][i]
 
             # converting to Hex
@@ -526,7 +527,7 @@ class DBC():
             s = ''
             hex_num = '0x'
 
-            for j in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+            for j in range(nanowire_num_start_pos, nanowire_num_end_pos):
                 s += str(self.memory[self.TRd_tail][j])
                 count += 1
                 if count == 4:
@@ -636,8 +637,8 @@ class DBC():
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
             perform_param['read'] += 0
-            perform_param['TR_reads'] += (1)
-            perform_param['shift'] += 0
+            perform_param['TR_reads'] += config.bit_length*(config.TRd_size)#(1)
+            perform_param['shift'] += config.bit_length -1
             perform_param['STORE'] += 0
 
             return perform_param, Local_buffer

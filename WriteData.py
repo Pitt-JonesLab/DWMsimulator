@@ -55,7 +55,8 @@ def overwrite_zero(memory, row_number, nanowire_num_start_pos, nanowire_num_end_
 
     # Overwriting at the TRd head or tail
     local_buff_start = nanowire_num_start_pos
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
         memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
@@ -71,7 +72,7 @@ def overwrite_one(memory, row_number, nanowire_num_start_pos, nanowire_num_end_p
 
     # Overwriting at the TRd head or tail
     local_buff_start = nanowire_num_start_pos
-    for i in range(nanowire_num_start_pos, nanowire_num_end_pos+1):
+    for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
         memory[writeport][i] = Local_row_buffer[local_buff_start]
         local_buff_start += 1
 
