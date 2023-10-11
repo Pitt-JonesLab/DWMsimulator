@@ -9,8 +9,18 @@
 * SPIMulator.py is the main file where we read the intruction(.text) files. So, the instruction files needs to be initialized here every time we run a new algorithm.
 * config.py is the congiguration file where we can change the TRd size.
 
+### Getting Started:  
+  1. Clone the SPIMulator repository to your local machine:
+  2. Change to the SPIMulator directory:
+  3. Create a virtual environment (recommended):
+  4. Install the required Python packages:
+  5. In the SPIMulator directory find the config file:
+     *Explore the config.py file to customize SPIMulator to your specific requirements. This file allows you to define the parameters of domain wall memory cells, memory architecture, and simulation          parameters.*
+  6. In the main_controller change the __performance parameters__ to the require configuration for each instruction. This will impact the cycle and energy count.
+  7. To customize the energy value for each instruction type change the __perform param__ at the end of the file.  
 ### Domain wall memory 
 For this project we have a memory with 32 tracks and 512 nanowires.
+
 
 ### Instruction sets
 The general format is "CPIM DST SRC OP BLOCKSIZE WRITE_OPERATION".
