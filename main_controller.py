@@ -11,21 +11,21 @@ import numpy as np
 import WriteData as adt
 import LogicOperation as logicop
 import ArithmaticOperation as ao
-import shiftingfault as sftFlt
+from fault_modeling import f_percent_model
 import config as config
 
 class DBC():
     TRd_size = config.TRd_size
     bit_length = config.bit_length
     memory_size = config.memory_size
+    fault_mode = config.fault_mode
     # Initializing single Local Buffer for all DBC's
     Local_row_buffer = [0] * (bit_length)
-
 
     def __init__(self, ):
         '''This is a single instance of DBC'''
         # self.fault = 3
-        self.bit_length = DBC.bit_length #511
+        self.bit_length = DBC.bit_length - 1  #511
         self.memory_size = DBC.memory_size #32
         # self.padding_bits = int(self.memory_size / 2)
         self.TRd_head = int(0)
@@ -299,12 +299,12 @@ class DBC():
 
             adt.overwrite_zero(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
-            perform_param['write'] += 32#1
-            perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += 0
-            perform_param['shift'] += 0
-            perform_param['STORE'] += 0
+            perform_param['write'] = config.bit_length#1
+            perform_param['TR_writes'] = 0
+            perform_param['read'] = 0
+            perform_param['TR_reads'] = 0
+            perform_param['shift'] = config.bit_length -1
+            perform_param['STORE'] = 0
 
             return perform_param
 
@@ -313,12 +313,12 @@ class DBC():
             # print('overwrite', self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             adt.overwrite_one(self.memory, self.TRd_tail, nanowire_num_start_pos, nanowire_num_end_pos, DBC.Local_row_buffer)
             ## performance parameters
-            perform_param['write'] += 32#1
-            perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += 0
-            perform_param['shift'] += 0
-            perform_param['STORE'] += 0
+            perform_param['write'] = config.bit_length#1
+            perform_param['TR_writes'] = 0
+            perform_param['read'] = 0
+            perform_param['TR_reads'] = 0
+            perform_param['shift'] = (config.bit_length - 1)
+            perform_param['STORE'] = 0
 
             return perform_param
 
@@ -607,6 +607,11 @@ class DBC():
         elif (instruction == 'AND'):
             Local_buffer = logicop.And(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
+            # Modeling fault probabilities
+            if config.fault_mode == True:
+                # count number if ones between head and tail
+                f_percent_model(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
             ## performance parameters
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
@@ -619,6 +624,11 @@ class DBC():
 
         elif instruction == 'NAND':
             Local_buffer = logicop.Nand(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            # Modeling fault probabilities
+            if config.fault_mode == True:
+                # count number if ones between head and tail
+                f_percent_model(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
             ## performance parameters
             perform_param['write'] += 0
@@ -633,31 +643,47 @@ class DBC():
         elif instruction == 'XOR':
             Local_buffer = logicop.Xor(self.memory, self.TRd_head,nanowire_num_start_pos, nanowire_num_end_pos)
 
+            # Modeling fault probabilities
+            if config.fault_mode == True:
+                # count number if ones between head and tail
+                f_percent_model(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
             ## performance parameters
-            perform_param['write'] += 0
-            perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += config.bit_length*(config.TRd_size)#(1)
-            perform_param['shift'] += config.bit_length -1
-            perform_param['STORE'] += 0
+            perform_param['write'] = 0
+            perform_param['TR_writes'] = 0
+            perform_param['read'] = config.bit_length
+            print(perform_param['read'])
+            perform_param['TR_reads'] = 0#(1)
+            perform_param['shift'] = config.bit_length - 1
+            perform_param['STORE'] = 0
 
             return perform_param, Local_buffer
 
         elif instruction == 'XNOR':
             Local_buffer = logicop.Xnor(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
+            # Modeling fault probabilities
+            if config.fault_mode == True:
+                # count number if ones between head and tail
+                f_percent_model(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
             ## performance parameters
-            perform_param['write'] += 0
-            perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += (1)
-            perform_param['shift'] += 0
-            perform_param['STORE'] += 0
+            perform_param['write'] = 0
+            perform_param['TR_writes'] = 0
+            perform_param['read'] = 0
+            perform_param['TR_reads'] = (1)
+            perform_param['shift'] = 0
+            perform_param['STORE'] = 0
 
             return perform_param, Local_buffer
 
         elif instruction == 'OR':
             Local_buffer = logicop.Or(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            # Modeling fault probabilities
+            if config.fault_mode == True:
+                # count number if ones between head and tail
+                f_percent_model(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
             ## performance parameters
             perform_param['write'] += 0
@@ -672,6 +698,11 @@ class DBC():
         elif instruction == 'NOR':
             Local_buffer = logicop.Nor(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
+            # Modeling fault probabilities
+            if config.fault_mode == True:
+                # count number if ones between head and tail
+                f_percent_model(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
             ## performance parameters
             perform_param['write'] += 0
             perform_param['TR_writes'] += 0
@@ -684,6 +715,11 @@ class DBC():
 
         elif instruction == 'NOT':
             Local_buffer = logicop.Not(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+
+            # Modeling fault probabilities
+            if config.fault_mode == True:
+                # count number if ones between head and tail
+                f_percent_model(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
 
             ## performance parameters
             perform_param['write'] += 0
@@ -728,33 +764,33 @@ class DBC():
 
             return perform_param, Local_buffer
 
-
-        elif instruction == 'PC':
-            Local_buffer = sftFlt.parity_checking(self.memory, self.TRd_head,nanowire_num_start_pos, nanowire_num_end_pos)
-
-            ## performance parameters
-            perform_param['write'] += 0
-            perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += (1)
-            perform_param['shift'] += 0
-            perform_param['STORE'] += 0
-
-            return perform_param, Local_buffer
-
-
-        # elif instruction == 'RS':
-        #     None
-        elif instruction == 'CS' or instruction == 'RS':
-            Local_buffer = sftFlt.corrective_shift(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
-            ## performance parameters
-            perform_param['write'] += 0
-            perform_param['TR_writes'] += 0
-            perform_param['read'] += 0
-            perform_param['TR_reads'] += (0)
-            perform_param['shift'] += 0
-            perform_param['STORE'] += 0
-
-
-            return perform_param, Local_buffer
-
+        #
+        # elif instruction == 'PC':
+        #     Local_buffer = sftFlt.parity_checking(self.memory, self.TRd_head,nanowire_num_start_pos, nanowire_num_end_pos)
+        #
+        #     ## performance parameters
+        #     perform_param['write'] += 0
+        #     perform_param['TR_writes'] += 0
+        #     perform_param['read'] += 0
+        #     perform_param['TR_reads'] += (1)
+        #     perform_param['shift'] += 0
+        #     perform_param['STORE'] += 0
+        #
+        #     return perform_param, Local_buffer
+        #
+        #
+        # # elif instruction == 'RS':
+        # #     None
+        # elif instruction == 'CS' or instruction == 'RS':
+        #     Local_buffer = sftFlt.corrective_shift(self.memory, self.TRd_head, nanowire_num_start_pos, nanowire_num_end_pos)
+        #     ## performance parameters
+        #     perform_param['write'] += 0
+        #     perform_param['TR_writes'] += 0
+        #     perform_param['read'] += 0
+        #     perform_param['TR_reads'] += (0)
+        #     perform_param['shift'] += 0
+        #     perform_param['STORE'] += 0
+        #
+        #
+        #     return perform_param, Local_buffer
+        #

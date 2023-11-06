@@ -11,6 +11,7 @@ TRd_size = config.TRd_size
 bit_length = config.bit_length
 memory_size = config.memory_size
 
+
 def get_adress(address):
 
     if address <= 31:
@@ -116,7 +117,7 @@ perform_param = {key: 0 for key in keys}
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of text file
-instruction_file = open("/Users/paviabera/Desktop/New XOR.txt", "r")
+instruction_file = open("/Users/paviabera/Desktop/DWM simulator/Instruction Sets/BitmapIndices.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
@@ -160,12 +161,14 @@ for line in lines:
             # if instruction_line[0] == 'WRITE':
             #Calling read functionx
             param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, bit_length, None)
-            perform_param['write'] += param_table['write']
-            perform_param['TR_writes'] += param_table['TR_writes']
-            perform_param['read'] += param_table['read']
-            perform_param['TR_reads'] += param_table['TR_reads']
-            perform_param['shift'] += param_table['shift']
-            perform_param['STORE'] += param_table['STORE']
+            # perform_param['write'] += param_table['write']
+            # perform_param['TR_writes'] += param_table['TR_writes']
+            # print('here', perform_param['read'])
+            # perform_param['read'] += param_table['read']
+            # print('here', perform_param['read'])
+            # perform_param['TR_reads'] += param_table['TR_reads']
+            # perform_param['shift'] += param_table['shift']
+            # perform_param['STORE'] += param_table['STORE']
 
             data_hex = data[2:]
             nanowire_num_start_pos = 0
@@ -184,8 +187,6 @@ for line in lines:
         # mask data_hex with zeros:
             N = ((memory_size)//2) - len(data_hex)
             data_hex = data_hex.ljust(N + len(data_hex), '0')
-
-
 
 
 
@@ -355,55 +356,54 @@ for line in lines:
 
 
 
-            ## Calculating shifting faults
-            elif instruction_line[3] == 'PC':
-                # call operations
-                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'PC', 0, bit_length)
-                data_hex = data[2:]
-                perform_param['write'] += param_table['write']
-                perform_param['TR_writes'] += param_table['TR_writes']
-                perform_param['read'] += param_table['read']
-                perform_param['TR_reads'] += param_table['TR_reads']
-                perform_param['shift'] += param_table['shift']
-                perform_param['STORE'] += param_table['STORE']
-
-                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0,
-                                         bit_length,
-                                         data_hex)
-                perform_param['write'] += param_table['write']
-                perform_param['TR_writes'] += param_table['TR_writes']
-                perform_param['read'] += param_table['read']
-                perform_param['TR_reads'] += param_table['TR_reads']
-                perform_param['shift'] += param_table['shift']
-                perform_param['STORE'] += param_table['STORE']
-
-            elif instruction_line[3] == 'RS':
-                None
-            elif instruction_line[3] == 'CS':
-                # call operations
-                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'CS', 0, bit_length)
-                data_hex = data[2:]
-                perform_param['write'] += param_table['write']
-                perform_param['TR_writes'] += param_table['TR_writes']
-                perform_param['read'] += param_table['read']
-                perform_param['TR_reads'] += param_table['TR_reads']
-                perform_param['shift'] += param_table['shift']
-                perform_param['STORE'] += param_table['STORE']
-
-                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0,
-                                         bit_length,
-                                         data_hex)
-                perform_param['write'] += param_table['write']
-                perform_param['TR_writes'] += param_table['TR_writes']
-                perform_param['read'] += param_table['read']
-                perform_param['TR_reads'] += param_table['TR_reads']
-                perform_param['shift'] += param_table['shift']
-                perform_param['STORE'] += param_table['STORE']
-
+            # ## Calculating shifting faults
+            # elif instruction_line[3] == 'PC':
+            #     # call operations
+            #     param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'PC', 0, bit_length)
+            #     data_hex = data[2:]
+            #     perform_param['write'] += param_table['write']
+            #     perform_param['TR_writes'] += param_table['TR_writes']
+            #     perform_param['read'] += param_table['read']
+            #     perform_param['TR_reads'] += param_table['TR_reads']
+            #     perform_param['shift'] += param_table['shift']
+            #     perform_param['STORE'] += param_table['STORE']
+            #
+            #     param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0,
+            #                              bit_length,
+            #                              data_hex)
+            #     perform_param['write'] += param_table['write']
+            #     perform_param['TR_writes'] += param_table['TR_writes']
+            #     perform_param['read'] += param_table['read']
+            #     perform_param['TR_reads'] += param_table['TR_reads']
+            #     perform_param['shift'] += param_table['shift']
+            #     perform_param['STORE'] += param_table['STORE']
+            #
+            # elif instruction_line[3] == 'RS':
+            #     None
+            # elif instruction_line[3] == 'CS':
+            #     # call operations
+            #     param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'CS', 0, bit_length)
+            #     data_hex = data[2:]
+            #     perform_param['write'] += param_table['write']
+            #     perform_param['TR_writes'] += param_table['TR_writes']
+            #     perform_param['read'] += param_table['read']
+            #     perform_param['TR_reads'] += param_table['TR_reads']
+            #     perform_param['shift'] += param_table['shift']
+            #     perform_param['STORE'] += param_table['STORE']
+            #
+            #     param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0,
+            #                              bit_length,
+            #                              data_hex)
+            #     perform_param['write'] += param_table['write']
+            #     perform_param['TR_writes'] += param_table['TR_writes']
+            #     perform_param['read'] += param_table['read']
+            #     perform_param['TR_reads'] += param_table['TR_reads']
+            #     perform_param['shift'] += param_table['shift']
+            #     perform_param['STORE'] += param_table['STORE']
 
             else:
                 # call operations for logic operands
-                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, bit_length)
+                param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction_line[3], 0, bit_length - 1)
                 data_hex = data[2:]
                 perform_param['write'] += param_table['write']
                 perform_param['TR_writes'] += param_table['TR_writes']
@@ -411,6 +411,7 @@ for line in lines:
                 perform_param['TR_reads'] += param_table['TR_reads']
                 perform_param['shift'] += param_table['shift']
                 perform_param['STORE'] += param_table['STORE']
+
 
                 # call write function:
                 param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, bit_length, data_hex)
@@ -462,13 +463,13 @@ for line in lines:
         instruction_file.close()
 
 
-total_energy += perform_param['write'] * (bit_length+1)* 0.1
-total_energy += perform_param['TR_writes'] * 0.3 *(bit_length+1)
-total_energy += perform_param['read'] * 0.7 * (bit_length+1)
-total_energy += perform_param['TR_reads'] * 0.504676821*512
-total_energy += perform_param['shift'] * 0.3 * (bit_length+1)
+total_energy += perform_param['write'] * (bit_length)* 0.1
+total_energy += perform_param['TR_writes'] * 0.3 *(bit_length)
+total_energy += perform_param['read'] * 0.7 * (bit_length)
+total_energy += perform_param['TR_reads'] * 0.504676821*bit_length
+total_energy += perform_param['shift'] * 0.3 * (bit_length)
 total_energy += perform_param['STORE'] * 0
-total_energy += perform_param['TR_reads'] * 0.000958797 * (bit_length+1) #TODO: check pim energy
+total_energy += perform_param['TR_reads'] * 0.000958797 * (bit_length) #TODO: check pim energy
 
 
 total_cycles += perform_param['write'] * (9+4+4+4)

@@ -8,6 +8,7 @@ TRd_size = config.TRd_size
 # Initializing single Local Buffer for all DBC's
 Local_row_buffer = [0] * (512)
 
+
 def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
 
     TRd_head = int(row_number)
@@ -19,7 +20,7 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
         memory[TRd_head][i] = '0'
         memory[TRd_end_loc][i] = '0'
 
-    # display aftre appending zeros
+    # display after appending zeros
     # display(memory, 0, 'AP0')
 
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos - 1):
