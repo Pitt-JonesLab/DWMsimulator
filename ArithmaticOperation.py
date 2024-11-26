@@ -63,8 +63,7 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
 
 
 def multiply(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
-
-    TRd_head = int(row_number)
+    TRd_head = 1
     TRd_end_loc = TRd_head + TRd_size - 1
     # display(memory, TRd_head, 'AP0')
 
@@ -74,7 +73,9 @@ def multiply(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
     sum = ''
     # call carry, carry prime and xor till three operand
     l = nanowire_num_end_pos
-    while (TRd_size - 2)  < (l - TRd_head):
+    
+    # print(TRd_size - 2,l - TRd_head)
+    while (TRd_head)  < (TRd_end_loc):
 
         for i in range(0, 511):
             carry += carry_add(memory, TRd_head, i, i)
@@ -113,6 +114,41 @@ def multiply(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
     #         count = 0
 
     return result
+
+# # Initialize A and B as 8-bit binary integers
+# A = 0b00011111  # Binary representation of A: 0001 1111
+# B = 0b11111111  # Binary representation of B: 1111 1111
+
+# # Store results for each step in a list
+# results = []
+
+# # Loop over each bit of B, starting from the least significant bit
+# for i in range(8):
+#     # Check if B[i] is set (1)
+#     if (B >> i) & 1:
+#         # If B[i] is 1, shift A to the right by i positions
+#         result = A >> i
+#     else:
+#         # If B[i] is 0, result is 0
+#         result = 0b00000000
+#     # Append the result in an 8-bit binary format
+#     results.append(f"{result:08b}")
+
+# # Print each result
+# for i, res in enumerate(results):
+#     print(f"Step {i}: {res}")
+
+
+
+
+
+
+
+
+
+
+
+
 
 def xor_add(memory, row_number, nanowire_num_start_pos,nanowire_num_end_pos):
     TRd_head = int(row_number)

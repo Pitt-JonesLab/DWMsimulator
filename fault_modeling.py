@@ -23,7 +23,7 @@ def fault_modeling(faultpercent):
   p_2 = comb(n, k2)*(faultpercent**k2)
   p_3plus = 1 - (p_0 + p_1 + p_2)
 
-  print('p_0,p_1,p_2,p_3plus',p_0,p_1,p_2,p_3plus)
+#   print('p_0,p_1,p_2,p_3plus',p_0,p_1,p_2,p_3plus)
 
 
 def f_percent_model(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):

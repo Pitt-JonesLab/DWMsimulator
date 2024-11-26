@@ -79,6 +79,7 @@ def call_DBC(dbc, row_number, operation, nanowire_start_pos, nanowire_end_pos, d
     #     return param, r
     else:
         # Calling DBC object for each instruction above
+       
         param, data = dbc.controller(row_number, operation, nanowire_start_pos, nanowire_end_pos)
         return param, data
 
@@ -89,7 +90,7 @@ def write_type(dbcs, row_number_destination, write_type, nanowire_num_start_pos,
     if write_type == 0:
         # Type 0: Write back normally
         # Call Write
-
+     
         param = call_DBC(dbcs, row_number_destination, 'overwrite',  nanowire_num_start_pos, nanowire_num_end_pos, data_hex)
     elif write_type >= 1 and  write_type <= 6:
         # Type 1: Transverse writes
@@ -117,7 +118,7 @@ perform_param = {key: 0 for key in keys}
 dbcs = [DBC() for i in range(16)]
 
 #Reading Instruction of text file
-instruction_file = open("/Users/paviabera/Desktop/DWM simulator/Instruction Sets/BitmapIndices.txt", "r")
+instruction_file = open("Instruction Sets/test_mult.txt", "r")
 
 # Read single line in file
 lines = instruction_file.readlines()
@@ -159,7 +160,7 @@ for line in lines:
             print('Source Row No:', row_number_source)
 
             # if instruction_line[0] == 'WRITE':
-            #Calling read functionx
+            # Calling read functionx
             param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, 'Read', 0, bit_length, None)
             # perform_param['write'] += param_table['write']
             # perform_param['TR_writes'] += param_table['TR_writes']
@@ -189,7 +190,7 @@ for line in lines:
             data_hex = data_hex.ljust(N + len(data_hex), '0')
 
 
-
+        
         # instructions for CPIM operations
         if instruction_line[0] == 'CPIM':
             if instruction_line[3] == 'COPY':
@@ -285,58 +286,354 @@ for line in lines:
                 perform_param['STORE'] += param_table['STORE']
 
             elif instruction_line[3] == 'MULT':
+                
+                # Read B at location instruction_line[3]
 
                 # shift A for length of A
                 bit_no = int(instruction_line[4])
 
-                for i in range(0, bit_no-1):
-                    # Shift by 1 and write
-                    instruction = 'SHR' + ' ' + '1'
-                    # call operations
-                    param_table, A = call_DBC(dbcs[15], i, instruction, 0, bit_length)
-                    A_hex = A[2:]
-                    perform_param['write'] += param_table['write']
-                    perform_param['TR_writes'] += param_table['TR_writes']
-                    perform_param['read'] += param_table['read']
-                    perform_param['TR_reads'] += param_table['TR_reads']
-                    perform_param['shift'] += param_table['shift']
-                    perform_param['STORE'] += param_table['STORE']
+                #read the locations provided and move data to DBC 15(dedicted for multiplication) at row 481.
+                # write instruction are clubed read and writes
+                # [CPIM $481 source address STORE 512 0] 
+                # param_table = write_type(dbcs[15], 1, 0, 0, bit_length, data_hex)
+                # print(data_hex)
 
-                    param_table = write_type(dbcs[15], i+1, 0, 0, bit_length, A_hex)
-                    perform_param['write'] += param_table['write']
-                    perform_param['TR_writes'] += param_table['TR_writes']
-                    perform_param['read'] += param_table['read']
-                    perform_param['TR_reads'] += param_table['TR_reads']
-                    perform_param['shift'] += param_table['shift']
-                    perform_param['STORE'] += param_table['STORE']
+                # Read parameter A in DBC 15
+                #Calling read functionx
+                # assuming data is stored in DBC 15
+                DBC_number_mult = 15
+                row_number_mult = 0
+                param_table, A = call_DBC(dbcs[DBC_number_mult], row_number_mult, 'Read', 0, bit_length, None)
+                A = A[2:]
+                perform_param['write'] += param_table['write']
+                perform_param['TR_writes'] += param_table['TR_writes']
+                perform_param['read'] += param_table['read']
+                perform_param['TR_reads'] += param_table['TR_reads']
+                perform_param['shift'] += param_table['shift']
+                perform_param['STORE'] += param_table['STORE']
+
+                
 
                 # Convert hex data to bin
                 data_hex_size = int(bit_no/4)
-                data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
+                B = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
+                
+               
+                # for i in range(0, int(bit_no)):
+                if (int(B[0]) == 1):
+                    # write A with no shift
+                    DBC_number_mult = 15
+                    row_number_mult = 1
+                    
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
 
-                # Read B(data_hex) bitwise and Mask shifted A with zeros.
-                N = 128
-                mask_zeros = ''
-                mask_zeros = mask_zeros.ljust(N, '0')
-                # print(len(mask_zeros))
-                # print('data_bin[i]', type(data_bin[i]))
+                else:
+                    # Put A = 00000000
+                    A_zeros = 00
+                    DBC_number_mult = 15
+                    row_number_mult = 1
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
+                    
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
 
-                for i in range(0, int(bit_no)):
 
-                    if (int(data_bin[i]) == 0):
-                        # print('mask with zeros')
-                        param_table = write_type(dbcs[15], i, 0, 0, bit_length, mask_zeros)
-                        perform_param['write'] += param_table['write']
-                        perform_param['TR_writes'] += param_table['TR_writes']
-                        perform_param['read'] += param_table['read']
-                        perform_param['TR_reads'] += param_table['TR_reads']
-                        perform_param['shift'] += param_table['shift']
-                        perform_param['STORE'] += param_table['STORE']
+                if (int(B[1]) == 1):
+                    # write A with SHR1
+                    # shift A SHR1
+                    DBC_number_mult = 15
+                    row_number_mult = 2
+                    instruction = ''
+                    instruction = 'SHR' + ' ' + '1'
+                    # call operations
+                    param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, bit_length)
+                    data_hex = data[2:]
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
 
+
+                    # write shifted A
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, data_hex)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+                else:
+                    # Put A = 00000000
+                    A_zeros = 00
+                    DBC_number_mult = 15
+                    row_number_mult = 2
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
+                    
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+
+
+                if (int(B[2]) == 1):
+                    # write A with SHR2
+                    # shift A SHR2
+                    DBC_number_mult = 15
+                    row_number_mult = 3
+                    instruction = ''
+                    instruction = 'SHR' + ' ' + '2'
+                    # call operations
+                    param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, bit_length)
+                    data_hex = data[2:]
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                    # write shifted A
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, data_hex)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+                else:
+                    # Put A = 00000000
+                    A_zeros = 00
+                    DBC_number_mult = 15
+                    row_number_mult = 3
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
+                   
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                if (int(B[3]) == 1):
+                    # write A with SHR3
+                    # shift A SHR3
+                    DBC_number_mult = 15
+                    row_number_mult = 4
+                    instruction = ''
+                    instruction = 'SHR' + ' ' + '3'
+                    # call operations
+                    param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, bit_length)
+                    data_hex = data[2:]
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                    # write shifted A
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, data_hex)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+                else:
+                    # Put A = 00000000
+                    A_zeros = 00
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
+                    
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+                if (int(B[4]) == 1):
+                    # write A with SHR4
+                    # shift A SHR4
+                    instruction = ''
+                    instruction = 'SHR' + ' ' + '4'
+                    # call operations
+                    param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, bit_length)
+                    data_hex = data[2:]
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                    # write shifted A
+                    DBC_number_mult = 15
+                    row_number_mult = 5
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, data_hex)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+                else:
+                    # Put A = 00000000
+                    A = 00
+                    param_table = write_type(dbcs[15], 1, 0, 0, bit_length, A)
+                    param_table = write_type(dbcs[15], i, 0, 0, bit_length, mask_zeros)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                if (int(B[5]) == 1):
+                    ## write A with SHR5
+                    # shift A SHR5
+                    instruction = ''
+                    instruction = 'SHR' + ' ' + '5'
+                    # call operations
+                    param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, bit_length)
+                    data_hex = data[2:]
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                    # write shifted A
+                    DBC_number_mult = 15
+                    row_number_mult = 6
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, data_hex)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+                else:
+                    # Put A = 00000000
+                    A_zeros = 00
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
+                    
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+                if (int(B[6]) == 1):
+                    # write A with SHR5
+                    # shift A SHR5
+                    instruction = ''
+                    instruction = 'SHR' + ' ' + '6'
+                    # call operations
+                    param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, bit_length)
+                    data_hex = data[2:]
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                    # write shifted A
+                    DBC_number_mult = 15
+                    row_number_mult = 7
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, data_hex)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+                
+                else:
+                    # Put A = 00000000
+                    A_zeros = 00
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
+                    
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                if (int(B[7]) == 1):
+                    # write A with SHR5
+                    # shift A SHR5
+                    instruction = ''
+                    instruction = 'SHR' + ' ' + '7'
+                    # call operations
+                    param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, bit_length)
+                    data_hex = data[2:]
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+
+                    # write shifted A
+                    DBC_number_mult = 15
+                    row_number_mult = 8
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, data_hex)
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+                else:
+                    # Put A = 00000000
+                    A_zeros = 00
+                    param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
+                    
+                    perform_param['write'] += param_table['write']
+                    perform_param['TR_writes'] += param_table['TR_writes']
+                    perform_param['read'] += param_table['read']
+                    perform_param['TR_reads'] += param_table['TR_reads']
+                    perform_param['shift'] += param_table['shift']
+                    perform_param['STORE'] += param_table['STORE']
+
+                   
 
                 # call mult operations
                 param_table, data = call_DBC(dbcs[15], 0, instruction_line[3], 0, instruction_line[4])
                 data_hex = data[2:]
+                
                 total_energy += (512 * (0.504676821 + 0.000958797) + 512 * 0.1 + (512 - 64) * 0.1 + (512 - 128) * 0.1) +  512*(6*(0.3) + 8*(0.1) + 8*(0.7) + 8*(0.3) + 7*(0.3) + 3*(0.504676821) + 3*(0.1) + 2*(0.3) + 3*(0.7) + 3*(0.3) + 1*(0.3) + 4*(0.3) + 4*(0.7))
                 total_cycles += (8*((9+4+4)) + 8*(9+4+4+4) + 7*(9+4+4+4)) + 6*(2) + 8*(9+4+4+4) + 8*(9+4+4) + 8*(2) + 7*(2) + 3*(9+4+4) + 3*(9+4+4+4) + 2*(2) + 3*(9+4+4) + 3*(9+4+4+4+2) + 1*(2) + 4*(9+4+4+4+2) + 4*(9+4+4)
                 perform_param['write'] += param_table['write']
@@ -345,7 +642,7 @@ for line in lines:
                 perform_param['TR_reads'] += param_table['TR_reads']
                 perform_param['shift'] += param_table['shift']
                 perform_param['STORE'] += param_table['STORE']
-
+                
                 param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, bit_length, data_hex)
                 perform_param['write'] += param_table['write']
                 perform_param['TR_writes'] += param_table['TR_writes']

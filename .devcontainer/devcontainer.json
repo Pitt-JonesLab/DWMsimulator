@@ -1,0 +1,36 @@
+{
+	"name": "usf-DWM-SPIMulator",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": { "VARIANT": "bookworm" }
+	},
+
+	"customizations": {
+		"codespaces": {
+			"extensions": [
+			]
+		},
+		// Add the IDs of extensions you want installed when the container is created.
+		"vscode": {
+			"extensions": [
+				"eamodio.gitlens",
+				"ms-python.python"
+
+			]
+		},
+		// Set *default* container specific settings.json values on container create.
+		"settings": {}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [],
+
+	// Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
+	"mounts": [],
+
+	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
+	// "runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
+}

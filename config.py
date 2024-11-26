@@ -1,9 +1,9 @@
-TRd_size = 5
+TRd_size = 7
 bit_length = 512 # 512 no of nanowires
 memory_size = 32 # 31 size of the memory
 display_row_before_head = 0
 display_row_after_tail = 0
-fault_mode = True
+fault_mode = False
 
 numBits = 64
 max_fault = 5

@@ -8,6 +8,7 @@ row_before_head = config.display_row_before_head
 row_after_tail =  config.display_row_after_tail
 
 def display(memory,row_number, s):
+
     TRd_pos = (s)
     nanowire_num_start_pos = 0
     nanowire_num_end_pos = bit_length
@@ -16,8 +17,9 @@ def display(memory,row_number, s):
 
     start = 0
     stop = 0
-    TRd_head = 0
-    TRd_tail = TRd_head + TRd_size
+    TRd_head = row_number
+    TRd_tail = TRd_head + TRd_size - 1
+    
 
     if TRd_pos == 'AP0':
         start = row_number + row_before_head
@@ -76,7 +78,7 @@ def display(memory,row_number, s):
         #     TRd_head = row_number
 
     # print(start, stop+1,TRd_pos)
-    print(start, stop, bit_length)
+    # print(start, stop, bit_length)
     # Converting bin to hex
     for i in range(start, stop+1):
 
@@ -98,6 +100,7 @@ def display(memory,row_number, s):
         # for j in range(44 + 1, nanowire_num_end_pos):
         #     hex_num += ('-')
 
+        
         # Add to table
         if i == TRd_head:
             t = ['AP0', i, hex_num]

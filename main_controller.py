@@ -261,6 +261,7 @@ class DBC():
             # Convert hex data to bin
             data_hex_size = len(data_hex) * 4
             data_bin = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
+            
             for i in range(0, len(data_bin)):
                 DBC.Local_row_buffer[i] = data_bin[i]
 
@@ -431,6 +432,7 @@ class DBC():
         elif ('SHR' in instruction):
             command = (instruction.rsplit(' ', 2))
             n = int(command[1])
+            # print("n",n)
             local_buffer_count = n
 
 
@@ -454,7 +456,9 @@ class DBC():
             count = 0
             s = ''
             hex_num = '0x'
-            for i in range(nanowire_num_start_pos, nanowire_num_end_pos + 1):
+            # print(DBC.Local_row_buffer[i])
+            for i in range(nanowire_num_start_pos, nanowire_num_end_pos):
+                # print(i)
                 s += str(DBC.Local_row_buffer[i])
                 count += 1
                 if count == 4:
@@ -652,7 +656,7 @@ class DBC():
             perform_param['write'] = 0
             perform_param['TR_writes'] = 0
             perform_param['read'] = config.bit_length
-            print(perform_param['read'])
+            # print(perform_param['read'])
             perform_param['TR_reads'] = 0#(1)
             perform_param['shift'] = config.bit_length - 1
             perform_param['STORE'] = 0
