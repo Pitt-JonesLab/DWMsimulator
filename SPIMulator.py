@@ -285,8 +285,10 @@ for line in lines:
                 perform_param['shift'] += param_table['shift']
                 perform_param['STORE'] += param_table['STORE']
 
+                
             elif instruction_line[3] == 'MULT':
                 
+                A_zeros = '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
                 # Read B at location instruction_line[3]
 
                 # shift A for length of A
@@ -303,8 +305,11 @@ for line in lines:
                 # assuming data is stored in DBC 15
                 DBC_number_mult = 15
                 row_number_mult = 0
-                param_table, A = call_DBC(dbcs[DBC_number_mult], row_number_mult, 'Read', 0, bit_length, None)
-                A = A[2:]
+                param_table, B = call_DBC(dbcs[DBC_number_mult], row_number_mult, 'Read', 0, bit_length, None)
+                B = B[2:]
+                # Convert hex data to bin
+                data_hex_size = int(bit_no/4)
+                B = (bin(int(B, 16))[2:]).zfill(data_hex_size)
                 perform_param['write'] += param_table['write']
                 perform_param['TR_writes'] += param_table['TR_writes']
                 perform_param['read'] += param_table['read']
@@ -315,9 +320,10 @@ for line in lines:
                 
 
                 # Convert hex data to bin
-                data_hex_size = int(bit_no/4)
-                B = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
-                
+                # data_hex_size = int(bit_no/4)
+                # A = (bin(int(data_hex, 16))[2:]).zfill(data_hex_size)
+                # print(len(A))
+                A = data_hex
                
                 # for i in range(0, int(bit_no)):
                 if (int(B[0]) == 1):
@@ -335,7 +341,7 @@ for line in lines:
 
                 else:
                     # Put A = 00000000
-                    A_zeros = 00
+                    
                     DBC_number_mult = 15
                     row_number_mult = 1
                     param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
@@ -377,7 +383,7 @@ for line in lines:
 
                 else:
                     # Put A = 00000000
-                    A_zeros = 00
+                    
                     DBC_number_mult = 15
                     row_number_mult = 2
                     param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
@@ -421,9 +427,8 @@ for line in lines:
 
                 else:
                     # Put A = 00000000
-                    A_zeros = 00
-                    DBC_number_mult = 15
-                    row_number_mult = 3
+                    
+                    
                     param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
                    
                     perform_param['write'] += param_table['write']
@@ -462,7 +467,8 @@ for line in lines:
                     perform_param['STORE'] += param_table['STORE']
                 else:
                     # Put A = 00000000
-                    A_zeros = 00
+                    DBC_number_mult = 15
+                    row_number_mult = 4
                     param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
                     
                     perform_param['write'] += param_table['write']
@@ -500,7 +506,8 @@ for line in lines:
                     perform_param['STORE'] += param_table['STORE']
                 else:
                     # Put A = 00000000
-                    A = 00
+                    DBC_number_mult = 15
+                    row_number_mult = 5
                     param_table = write_type(dbcs[15], 1, 0, 0, bit_length, A)
                     param_table = write_type(dbcs[15], i, 0, 0, bit_length, mask_zeros)
                     perform_param['write'] += param_table['write']
@@ -519,6 +526,7 @@ for line in lines:
                     # call operations
                     param_table, data = call_DBC(dbcs[DBC_number_source], row_number_source, instruction, 0, bit_length)
                     data_hex = data[2:]
+                    # print("shifted hex data SH5 = ",data_hex)
                     perform_param['write'] += param_table['write']
                     perform_param['TR_writes'] += param_table['TR_writes']
                     perform_param['read'] += param_table['read']
@@ -540,7 +548,9 @@ for line in lines:
 
                 else:
                     # Put A = 00000000
-                    A_zeros = 00
+                    # write shifted A
+                    DBC_number_mult = 15
+                    row_number_mult = 6
                     param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
                     
                     perform_param['write'] += param_table['write']
@@ -579,7 +589,9 @@ for line in lines:
                 
                 else:
                     # Put A = 00000000
-                    A_zeros = 00
+                     # write shifted A
+                    DBC_number_mult = 15
+                    row_number_mult = 7
                     param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
                     
                     perform_param['write'] += param_table['write']
@@ -618,7 +630,8 @@ for line in lines:
                     perform_param['STORE'] += param_table['STORE']
                 else:
                     # Put A = 00000000
-                    A_zeros = 00
+                    DBC_number_mult = 15
+                    row_number_mult = 8
                     param_table = write_type(dbcs[DBC_number_mult], row_number_mult, 0, 0, bit_length, A_zeros)
                     
                     perform_param['write'] += param_table['write']

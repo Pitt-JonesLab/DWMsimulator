@@ -13,7 +13,8 @@ def addition(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
 
     TRd_head = int(row_number)
     TRd_end_loc = TRd_head + TRd_size - 1
-
+    # print(TRd_head, TRd_end_loc)
+    display(memory, TRd_head, 'AP0')
     result = ''
     # Fill AP0 and AP1 with 0's
     for i in range(nanowire_num_start_pos, nanowire_num_end_pos ):
@@ -72,31 +73,39 @@ def multiply(memory, row_number, nanowire_num_start_pos, nanowire_num_end_pos):
     carry_prime = ''
     sum = ''
     # call carry, carry prime and xor till three operand
-    l = nanowire_num_end_pos
+    l = TRd_end_loc + 1
     
     # print(TRd_size - 2,l - TRd_head)
-    while (TRd_head)  < (TRd_end_loc):
-
+    while (TRd_head)  <= (TRd_end_loc):
+        print("c+cp_xor",TRd_head,TRd_end_loc)
         for i in range(0, 511):
-            carry += carry_add(memory, TRd_head, i, i)
-            carry_prime += carry_prime_add(memory, TRd_head, i, i)
-            sum += xor_add(memory, TRd_head, i, i)
+            carry = carry + carry_add(memory, TRd_head, i, i)
+            
+            carry_prime = carry_prime + carry_prime_add(memory, TRd_head, i, i)
+            sum = sum + xor_add(memory, TRd_head, i, i)
 
+        display(memory, TRd_head, 'AP0')
+        # print("carry",carry)
+        # print("carry_prime",carry_prime)
+        # print("sum",sum)
+        # print("carry,carry_prime,sum=",carry,carry_prime,sum)
         # write c, c' and sum
         for i in range(0, 510):
-            memory[l][i + 1] = carry[i]
+            memory[l+1][i + 1] = carry[i]
         for i in range(0, 509):
-            memory[l + 1][i + 2] = carry_prime[i]
+            memory[l + 2][i + 2] = carry_prime[i]
         for i in range(0, 511):
-            memory[l + 2][i] = sum[i]
+            memory[l + 3][i] = sum[i]
+            memory[TRd_end_loc][i] = 0
 
         # display(memory, TRd_head, 'AP0')
 
         TRd_head += TRd_size
         l += 3
+        
 
     # Call ADD function
-    result = addition(memory, TRd_head - 1, nanowire_num_start_pos, 16)
+    result = addition(memory, TRd_end_loc, nanowire_num_start_pos, 16)
     # print('result', result)
 
     # # Converting binary data at TRd head to Hex for verification/visualization
