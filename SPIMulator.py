@@ -656,7 +656,27 @@ for line in lines:
                 perform_param['shift'] += param_table['shift']
                 perform_param['STORE'] += param_table['STORE']
                 
-                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, bit_length, data_hex)
+                # Initial hexadecimal data
+                # data_hex = string(data_hex)  # Example hexadecimal string
+
+                # Step 1: Convert hex to binary
+                binary_data = bin(int(data_hex, 16))[2:]  # Convert to binary and strip the '0b' prefix
+
+                # Ensure binary data is padded to a multiple of 4 (each hex digit = 4 bits)
+                binary_data = binary_data.zfill(len(data_hex) * 4)
+
+                # Step 2: Reverse the binary string
+                reversed_binary_data = binary_data[::-1]
+
+                # Step 3: Convert reversed binary back to hexadecimal
+                reversed_hex = hex(int(reversed_binary_data, 2))[2:].upper()
+
+                # print(f"Original Hex: {data_hex}")
+                # print(f"Binary Data: {binary_data}")
+                # print(f"Reversed Binary Data: {reversed_binary_data}")
+                # print(f"Reversed Hex: {reversed_hex}")
+                
+                param_table = write_type(dbcs[DBC_number_destinantion], row_number_destination, instruction_line[5], 0, bit_length, reversed_hex)
                 perform_param['write'] += param_table['write']
                 perform_param['TR_writes'] += param_table['TR_writes']
                 perform_param['read'] += param_table['read']
