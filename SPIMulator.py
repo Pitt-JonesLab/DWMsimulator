@@ -288,7 +288,8 @@ for line in lines:
                 
             elif instruction_line[3] == 'MULT':
                 
-                A_zeros = '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+                A_zeros = '0' * 128
+                
                 # Read B at location instruction_line[3]
 
                 # shift A for length of A
@@ -307,9 +308,19 @@ for line in lines:
                 row_number_mult = 0
                 param_table, B = call_DBC(dbcs[DBC_number_mult], row_number_mult, 'Read', 0, bit_length, None)
                 B = B[2:]
+
                 # Convert hex data to bin
                 data_hex_size = int(bit_no/4)
-                B = (bin(int(B, 16))[2:]).zfill(data_hex_size)
+                print(f"data_hex_size: {data_hex_size}")
+
+                print(f"Raw B before conversion: {repr(B)}, Length: {len(B)}")
+
+                # B = (bin(int(B, 16))[2:]).zfill(data_hex_size)
+                B = bin(int(B, 16))[2:].zfill(bit_no)  # Ensures full binary size
+
+                
+
+
                 perform_param['write'] += param_table['write']
                 perform_param['TR_writes'] += param_table['TR_writes']
                 perform_param['read'] += param_table['read']
@@ -394,9 +405,6 @@ for line in lines:
                     perform_param['TR_reads'] += param_table['TR_reads']
                     perform_param['shift'] += param_table['shift']
                     perform_param['STORE'] += param_table['STORE']
-
-
-
 
                 if (int(B[2]) == 1):
                     # write A with SHR2
@@ -509,7 +517,7 @@ for line in lines:
                     DBC_number_mult = 15
                     row_number_mult = 5
                     param_table = write_type(dbcs[15], 1, 0, 0, bit_length, A)
-                    param_table = write_type(dbcs[15], i, 0, 0, bit_length, mask_zeros)
+                    # param_table = write_type(dbcs[15], i, 0, 0, bit_length, mask_zeros)
                     perform_param['write'] += param_table['write']
                     perform_param['TR_writes'] += param_table['TR_writes']
                     perform_param['read'] += param_table['read']
